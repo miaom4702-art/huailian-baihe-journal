@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String
+  passwordHash String
+  role         String    @default("READER")
+  affiliation  String?
+  bio          String?
+  memberSince  DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  sessions               Session[]
+  submissions            Submission[]            @relation("SubmissionAuthor")
+  assignedSubmissions    Submission[]            @relation("AssignedEditor")
+  articles               Article[]
+  announcements          Announcement[]
+  membershipApplications MembershipApplication[] @relation("Applicant")
+  reviewedApplications   MembershipApplication[] @relation("MembershipReviewer")
+  reviews                ReviewRecord[]
+  auditLogs              AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Submission {
+  id              String    @id @default(cuid())
+  userId          String
+  title           String
+  abstract        String
+  keywords        String
+  category        String
+  content         String
+  status          String    @default("SUBMITTED")
+  editorNote      String?
+  assignedEditorId String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  publishedAt     DateTime?
+
+  author         User           @relation("SubmissionAuthor", fields: [userId], references: [id], onDelete: Cascade)
+  assignedEditor User?          @relation("AssignedEditor", fields: [assignedEditorId], references: [id], onDelete: SetNull)
+  article        Article?
+  reviews        ReviewRecord[]
+
+  @@index([userId])
+  @@index([status, createdAt])
+}
+
+model Article {
+  id           String   @id @default(cuid())
+  slug         String   @unique
+  title        String
+  abstract     String
+  keywords     String
+  category     String
+  content      String
+  featured     Boolean  @default(false)
+  views        Int      @default(0)
+  publishedAt  DateTime @default(now())
+  createdAt    DateTime @default(now())
+  submissionId String   @unique
+  authorId     String
+  issueId      String?
+
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  author     User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  issue      Issue?     @relation(fields: [issueId], references: [id], onDelete: SetNull)
+
+  @@index([issueId])
+  @@index([authorId])
+  @@index([publishedAt])
+}
+
+model Issue {
+  id          String   @id @default(cuid())
+  volume      Int
+  number      Int
+  year        Int
+  title       String
+  theme       String?
+  description String?
+  publishedAt DateTime
+  createdAt   DateTime @default(now())
+
+  articles Article[]
+
+  @@unique([year, volume, number])
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  pinned      Boolean  @default(false)
+  publishedAt DateTime @default(now())
+  authorId    String
+
+  author User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([publishedAt])
+}
+
+model MembershipApplication {
+  id           String    @id @default(cuid())
+  userId       String?
+  name         String
+  email        String
+  studentId    String?
+  school       String
+  major        String?
+  reason       String
+  status       String    @default("PENDING")
+  reviewNote   String?
+  reviewedById String?
+  reviewedAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  applicant User? @relation("Applicant", fields: [userId], references: [id], onDelete: SetNull)
+  reviewer  User? @relation("MembershipReviewer", fields: [reviewedById], references: [id], onDelete: SetNull)
+
+  @@index([status, createdAt])
+}
+
+model ReviewRecord {
+  id           String   @id @default(cuid())
+  submissionId String
+  editorId     String
+  action       String
+  note         String?
+  createdAt    DateTime @default(now())
+
+  submission Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  editor     User       @relation(fields: [editorId], references: [id], onDelete: Cascade)
+
+  @@index([submissionId, createdAt])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  action    String
+  entity    String
+  entityId  String?
+  ip        String?
+  meta      String?
+  createdAt DateTime @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}

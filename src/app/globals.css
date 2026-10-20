@@ -1,0 +1,111 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper-50 text-ink-900 font-sans antialiased;
+    background-image:
+      radial-gradient(circle at 12% 0%, rgba(200, 169, 106, 0.14), transparent 32rem),
+      radial-gradient(circle at 88% 8%, rgba(157, 34, 53, 0.07), transparent 28rem);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    @apply bg-crimson-600 text-paper-50;
+  }
+
+  a {
+    @apply underline-offset-4;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-crimson-600 ring-offset-2 ring-offset-paper-50;
+  }
+}
+
+@layer components {
+  .wrap {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-semibold uppercase tracking-[0.28em] text-crimson-600;
+  }
+
+  .card {
+    @apply rounded-sm border border-ink-900/10 bg-white/70 shadow-paper backdrop-blur-sm;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-sm px-5 py-2.5 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-primary {
+    @apply btn bg-ink-900 text-paper-50 hover:bg-ink-700;
+  }
+
+  .btn-crimson {
+    @apply btn bg-crimson-600 text-white hover:bg-crimson-700;
+  }
+
+  .btn-outline {
+    @apply btn border border-ink-900/25 bg-transparent text-ink-900 hover:border-ink-900/60 hover:bg-ink-900/5;
+  }
+
+  .btn-ghost {
+    @apply btn px-3 py-2 text-ink-700 hover:bg-ink-900/5;
+  }
+
+  .label {
+    @apply mb-1.5 block text-xs font-medium tracking-wide text-ink-700;
+  }
+
+  .input {
+    @apply w-full rounded-sm border border-ink-900/20 bg-white px-3.5 py-2.5 text-sm text-ink-900 placeholder:text-ink-900/35 focus:border-crimson-600 focus:outline-none focus:ring-1 focus:ring-crimson-600;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-[11px] font-medium ring-1 ring-inset;
+  }
+
+  .hairline {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-ink-900/20 to-transparent;
+  }
+
+  .article-body p {
+    @apply mb-5 text-[16.5px] leading-[1.95] text-ink-900/90;
+  }
+
+  .article-body p:first-letter {
+    @apply text-[1.02em];
+  }
+
+  .admin-table {
+    @apply w-full border-collapse text-left text-sm;
+  }
+
+  .admin-table th {
+    @apply border-b border-ink-900/15 px-3 py-3 text-[11px] font-semibold uppercase tracking-wider text-ink-700;
+  }
+
+  .admin-table td {
+    @apply border-b border-ink-900/10 px-3 py-3 align-top text-ink-900/85;
+  }
+}
+
+@media print {
+  header,
+  footer,
+  .no-print {
+    display: none !important;
+  }
+}
