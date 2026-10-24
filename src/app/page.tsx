@@ -1,7 +1,9 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { ArticleCard } from "@/components/article-card";
-import { Badge, SectionHeading, Stat } from "@/components/ui";
+import { MoonPair, Petals } from "@/components/lily-motifs";
+import { Badge, EmptyState, SectionHeading, Stat } from "@/components/ui";
 import { prisma } from "@/lib/db";
 import { categoryLabel, excerpt, formatDate, issueLabel } from "@/lib/utils";
 
@@ -11,6 +13,7 @@ export default async function HomePage() {
   const [latestIssue, featured, latest, announcements, articleCount, issueCount, memberCount] =
     await Promise.all([
       prisma.issue.findFirst({
+        where: { archivedAt: null },
         orderBy: { publishedAt: "desc" },
         include: {
           articles: {
@@ -21,12 +24,13 @@ export default async function HomePage() {
         },
       }),
       prisma.article.findMany({
-        where: { featured: true },
+        where: { featured: true, deletedAt: null },
         orderBy: { publishedAt: "desc" },
         take: 3,
         include: { author: { select: { name: true } } },
       }),
       prisma.article.findMany({
+        where: { deletedAt: null },
         orderBy: { publishedAt: "desc" },
         take: 6,
         include: { author: { select: { name: true } } },
@@ -35,7 +39,7 @@ export default async function HomePage() {
         orderBy: [{ pinned: "desc" }, { publishedAt: "desc" }],
         take: 3,
       }),
-      prisma.article.count(),
+      prisma.article.count({ where: { deletedAt: null } }),
       prisma.issue.count(),
       prisma.user.count({ where: { memberSince: { not: null } } }),
     ]);
@@ -43,23 +47,25 @@ export default async function HomePage() {
   return (
     <>
       <section className="relative overflow-hidden border-b border-ink-900/10">
+        <Petals count={6} className="opacity-60" />
+        <div className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,rgba(185,214,223,0.18),transparent_65%)]" />
         <div className="pointer-events-none absolute -right-24 top-10 hidden select-none font-serif text-[22rem] leading-none text-ink-900/[0.035] lg:block">
           百
         </div>
-        <div className="wrap grid items-center gap-14 py-16 lg:grid-cols-[1.12fr_0.88fr] lg:py-24">
+        <div className="wrap grid items-center gap-10 py-12 sm:gap-14 sm:py-16 lg:grid-cols-[1.12fr_0.88fr] lg:py-24">
           <div className="relative">
             <p className="eyebrow">淮安大学 · 淮联百合同好会</p>
-            <h1 className="mt-6 font-serif text-[38px] leading-[1.25] tracking-wide text-ink-900 sm:text-5xl lg:text-[54px]">
+            <h1 className="mt-6 font-serif text-[34px] leading-[1.25] sm:text-5xl tracking-wide text-ink-900 sm:text-5xl lg:text-[54px]">
               在文字的年轮里，
               <br />
               遇见同一种<span className="text-crimson-600">芬芳</span>。
             </h1>
-            <p className="mt-7 max-w-xl text-sm leading-8 text-ink-700/80">
-              《淮联百合学刊》创刊于 2025 年，刊发文学研究、历史考据、文化观察与艺术评论。
+            <p className="mt-5 max-w-xl text-sm leading-7 sm:mt-7 sm:leading-8 text-ink-700/80">
+              《淮联百合期刊》创刊于 2025 年，刊发同人、原创、短篇连载与长篇连载。
               我们相信，严肃的写作与温柔的共同体并不矛盾——每一期，都是一次缓慢而诚实的相聚。
             </p>
 
-            <div className="mt-9 flex flex-wrap gap-3">
+            <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 href={latestIssue ? `/issues/${latestIssue.id}` : "/issues"}
                 className="btn-primary"
@@ -73,11 +79,11 @@ export default async function HomePage() {
                 href="/about"
                 className="btn-ghost text-ink-700 underline decoration-ink-900/20"
               >
-                了解学刊
+                了解期刊
               </Link>
             </div>
 
-            <div className="mt-12 grid max-w-lg grid-cols-3 gap-6 border-t border-ink-900/10 pt-7">
+            <div className="mt-10 grid max-w-lg grid-cols-3 gap-4 sm:mt-12 sm:gap-6 border-t border-ink-900/10 pt-7">
               <Stat value={articleCount} label="已刊文章" />
               <Stat value={issueCount} label="出版期数" />
               <Stat value={memberCount} label="在册会员" />
@@ -85,9 +91,23 @@ export default async function HomePage() {
           </div>
 
           <div className="relative mx-auto w-full max-w-[330px]">
+            <MoonPair className="pointer-events-none absolute -left-24 -top-16 hidden w-[250px] opacity-55 sm:block" />
             <div className="absolute -inset-3 rotate-[-2.5deg] border border-gold-400/40" />
             <div className="absolute inset-0 translate-x-3 translate-y-3 bg-crimson-600/10" />
-            <div className="relative bg-ink-950 px-8 py-9 text-paper-50 shadow-2xl">
+            <div className="absolute -top-1 right-7 z-10 h-14 w-4 bg-gold-400 shadow-sm [clip-path:polygon(0_0,100%_0,100%_100%,50%_82%,0_100%)]" />
+            <div className="relative isolate bg-ink-950 px-6 py-8 text-paper-50 shadow-2xl sm:px-8 sm:py-9">
+              {latestIssue?.coverImage && (
+                <>
+                  <Image
+                    src={latestIssue.coverImage}
+                    alt=""
+                    fill
+                    unoptimized
+                    className="-z-10 object-cover opacity-45"
+                  />
+                  <div className="-z-10 absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/20" />
+                </>
+              )}
               <div className="flex items-center justify-between text-[9px] uppercase tracking-[0.24em] text-paper-100/50">
                 <span>Huailian Baihe</span>
                 <span>{latestIssue?.year ?? new Date().getFullYear()}</span>
@@ -101,7 +121,7 @@ export default async function HomePage() {
               <p className="mt-8 font-serif text-[26px] leading-snug tracking-[0.18em]">
                 淮联百合
                 <br />
-                学刊
+                期刊
               </p>
               <p className="mt-6 text-[10px] uppercase tracking-[0.22em] text-gold-300/80">
                 {latestIssue ? issueLabel(latestIssue) : "Journal of Humanities"}
@@ -124,7 +144,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="wrap py-16 lg:py-20">
+      <section className="wrap py-12 sm:py-16 lg:py-20">
         <SectionHeading
           eyebrow="Current Issue"
           title="本期目录"
@@ -206,7 +226,7 @@ export default async function HomePage() {
       </section>
 
       <section className="border-y border-ink-900/10 bg-paper-100/40">
-        <div className="wrap py-16 lg:py-20">
+        <div className="wrap py-12 sm:py-16 lg:py-20">
           <SectionHeading
             eyebrow="Featured"
             title="精选文章"
@@ -218,6 +238,17 @@ export default async function HomePage() {
             }
           />
 
+          {featured.length === 0 ? (
+            <EmptyState
+              title="精选文章正在筹备"
+              description="新一期文章刊发后，编辑部会从这里选出入门阅读篇目。"
+              action={
+                <Link href="/submit" className="btn-outline">
+                  向本刊投稿
+                </Link>
+              }
+            />
+          ) : (
           <div className="grid gap-6 md:grid-cols-3">
             {featured.map((article) => (
               <article
@@ -238,9 +269,11 @@ export default async function HomePage() {
                     {article.title}
                   </Link>
                 </h3>
-                <p className="mt-3 line-clamp-3 text-[13px] leading-6 text-ink-700/70">
-                  {excerpt(article.abstract, 120)}
-                </p>
+                {article.abstract && (
+                  <p className="mt-3 line-clamp-3 text-[13px] leading-6 text-ink-700/70">
+                    {excerpt(article.abstract, 120)}
+                  </p>
+                )}
                 <div className="mt-auto flex items-center justify-between border-t border-ink-900/10 pt-5 text-[11px] text-ink-700/55">
                   <span>{article.author.name}</span>
                   <Link
@@ -253,10 +286,11 @@ export default async function HomePage() {
               </article>
             ))}
           </div>
+          )}
         </div>
       </section>
 
-      <section className="wrap grid gap-12 py-16 lg:grid-cols-[1.25fr_0.75fr] lg:py-20">
+      <section className="wrap grid gap-10 py-12 sm:gap-12 sm:py-16 lg:grid-cols-[1.25fr_0.75fr] lg:py-20">
         <div>
           <SectionHeading
             eyebrow="Latest"
@@ -267,11 +301,23 @@ export default async function HomePage() {
               </Link>
             }
           />
-          <div className="space-y-6">
-            {latest.map((article, index) => (
-              <ArticleCard key={article.id} article={article} index={index} />
-            ))}
-          </div>
+          {latest.length === 0 ? (
+            <EmptyState
+              title="暂无新刊文章"
+              description="稿件经编辑部审稿、录用并刊发后，会出现在这里。"
+              action={
+                <Link href="/submit" className="btn-outline">
+                  投稿入口
+                </Link>
+              }
+            />
+          ) : (
+            <div className="space-y-6">
+              {latest.map((article, index) => (
+                <ArticleCard key={article.id} article={article} index={index} />
+              ))}
+            </div>
+          )}
         </div>
 
         <aside>

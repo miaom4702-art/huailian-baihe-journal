@@ -18,22 +18,18 @@ export function isRole(value: string): value is Role {
 }
 
 export const CATEGORIES = [
-  "LITERATURE",
-  "HISTORY",
-  "CULTURE",
-  "ART",
-  "REVIEW",
-  "NEWS",
+  "FANFICTION",
+  "ORIGINAL",
+  "SHORT_SERIAL",
+  "LONG_SERIAL",
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 export const CATEGORY_LABELS: Record<Category, string> = {
-  LITERATURE: "文学研究",
-  HISTORY: "历史考据",
-  CULTURE: "文化观察",
-  ART: "艺术评论",
-  REVIEW: "学术综述",
-  NEWS: "社团动态",
+  FANFICTION: "同人",
+  ORIGINAL: "原创",
+  SHORT_SERIAL: "短篇连载",
+  LONG_SERIAL: "长篇连载",
 };
 
 export const SUBMISSION_STATUSES = [
@@ -77,6 +73,35 @@ export const REVIEW_ACTION_LABELS: Record<string, string> = {
   ACCEPT: "录用",
   REJECT: "退稿",
   PUBLISH: "刊发",
+  ISSUE_ARCHIVE: "下架期刊",
+  ISSUE_RESTORE: "重新上架期刊",
+  ISSUE_COVER: "更换期刊封面",
+  ANNOUNCEMENT_CREATE: "发布公告",
+  ANNOUNCEMENT_UPDATE: "编辑公告",
+  ANNOUNCEMENT_DELETE: "删除公告",
+  ARTICLE_UPDATE: "编辑文章",
+  ARTICLE_DELETE: "下架文章",
+  ARTICLE_RESTORE: "恢复文章",
+  ASSOCIATION_CREATE: "创建协会",
+  ASSOCIATION_UPDATE: "编辑协会",
+  ASSOCIATION_DELETE: "删除协会",
+  PROFILE_UPDATE: "更新个人资料",
+  SERIAL_CREATE: "创建连载合集",
+  SERIAL_CHAPTER_ADD: "文章加入连载",
+  SERIAL_CHAPTER_REMOVE: "文章移出连载",
+  SERIAL_CHAPTER_REORDER: "调整连载章节顺序",
+  SERIAL_DELETE: "删除连载合集",
+  SERIAL_COVER: "更换连载封面",
+  COMMENT_DELETE: "删除评论",
+  ARTICLE_REVISION_SUBMIT: "提交文章修改",
+  ARTICLE_REVISION_APPROVE: "通过文章修改",
+  ARTICLE_REVISION_REJECT: "驳回文章修改",
+};
+
+export const REVISION_STATUS_LABELS: Record<string, string> = {
+  PENDING: "审核中",
+  APPROVED: "已通过",
+  REJECTED: "已驳回",
 };
 
 export const REVIEW_ACTIONS = [

@@ -1,5 +1,9 @@
 import { randomBytes } from "crypto";
 
+export function createSerialSlug(title: string) {
+  return createArticleSlug(title).replace(/^article-/, "serial-");
+}
+
 export function createArticleSlug(title: string) {
   const base = title
     .toLowerCase()

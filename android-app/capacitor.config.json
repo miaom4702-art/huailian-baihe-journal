@@ -1,0 +1,13 @@
+{
+  "appId": "org.hlbh.journal",
+  "appName": "淮联百合期刊",
+  "webDir": "www",
+  "server": {
+    "url": "https://journal.example.com",
+    "cleartext": false,
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  }
+}

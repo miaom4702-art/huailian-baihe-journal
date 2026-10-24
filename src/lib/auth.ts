@@ -18,6 +18,7 @@ export type SessionUser = {
   role: Role;
   affiliation: string | null;
   bio: string | null;
+  avatarImage: string | null;
   memberSince: Date | null;
   createdAt: Date;
 };
@@ -87,6 +88,7 @@ const sessionUserSelect = {
   role: true,
   affiliation: true,
   bio: true,
+  avatarImage: true,
   memberSince: true,
   createdAt: true,
 } as const;

@@ -33,7 +33,7 @@ async function main() {
       passwordHash: adminHash,
       role: "ADMIN",
       affiliation: "淮安大学文学院",
-      bio: "《淮联百合学刊》主编，研究方向为中国现当代文学与地方文献。",
+      bio: "《淮联百合期刊》主编，研究方向为中国现当代文学与地方文献。",
       memberSince: new Date("2016-09-01"),
     },
   });
@@ -45,7 +45,7 @@ async function main() {
       passwordHash: editorHash,
       role: "EDITOR",
       affiliation: "淮安大学人文学院",
-      bio: "编辑部副主任，负责散文与艺术评论栏目。",
+      bio: "编辑部副主任，负责原创与连载栏目。",
       memberSince: new Date("2018-03-12"),
     },
   });
@@ -124,7 +124,7 @@ async function main() {
       abstract:
         "本文以近三十年淮安地方报刊与校园刊物为材料，梳理百合花意象从“纯洁象征”到“地方共同体的情感标记”的转义过程，并讨论校园写作者如何在日常经验中重新发明这一符号。",
       keywords: "百合意象；地方文学；校园写作；符号转义",
-      category: "LITERATURE",
+      category: "ORIGINAL",
       featured: true,
       publishedAt: new Date("2025-06-15"),
       content: `一、问题的提出
@@ -151,7 +151,7 @@ async function main() {
       abstract:
         "本文以淮安运河段现存十二座古桥为对象，结合地方档案与匠人口述，讨论桥体形制、材料选择与沿岸社群生活之间的关系，尝试提出一种“桥作为日常基础设施”的观察路径。",
       keywords: "淮安运河；古桥；建筑人类学；口述史",
-      category: "HISTORY",
+      category: "ORIGINAL",
       featured: true,
       publishedAt: new Date("2025-06-15"),
       content: `一、田野与方法
@@ -178,7 +178,7 @@ async function main() {
       abstract:
         "本文基于淮联百合同好会刊物的编辑实践，讨论校园同人志在匿名写作、退稿沟通与版权处理方面的伦理困境，并提出以“可撤回的授权”为核心的编辑原则。",
       keywords: "同人志；编辑伦理；校园出版；共同体",
-      category: "CULTURE",
+      category: "ORIGINAL",
       featured: false,
       publishedAt: new Date("2025-11-20"),
       content: `一、同人志的双重身份
@@ -209,7 +209,7 @@ async function main() {
       abstract:
         "本文从《诗经》草木比兴的传统出发，考察百合在历代注疏与近现代植物学命名中的意义变化，指出其审美意涵始终与知识分类的变动相互纠缠。",
       keywords: "诗经；草木；百合；名物考据；审美",
-      category: "LITERATURE",
+      category: "ORIGINAL",
       featured: false,
       publishedAt: new Date("2025-11-20"),
       content: `一、名与物之间
@@ -236,7 +236,7 @@ async function main() {
       abstract:
         "本文讨论近年青年写作中反复出现的“小地方”叙事，分析其空间经验、语言策略与情感结构，并反思“地方”被浪漫化的风险。",
       keywords: "青年写作；小地方；空间叙事；地方性",
-      category: "ART",
+      category: "ORIGINAL",
       featured: true,
       publishedAt: new Date("2026-04-18"),
       content: `一、什么是“小地方”
@@ -267,7 +267,7 @@ async function main() {
       abstract:
         "本文以社团档案、活动海报与成员口述为依据，整理淮联百合同好会自成立以来的主要活动与刊物出版情况，为后续社团史研究提供基础材料。",
       keywords: "社团史；淮联百合同好会；校园文化；档案整理",
-      category: "NEWS",
+      category: "ORIGINAL",
       featured: false,
       publishedAt: new Date("2026-04-18"),
       content: `一、草创（2016—2018）
@@ -280,7 +280,7 @@ async function main() {
 
 三、刊物（2023—2026）
 
-《淮联百合学刊》前身为内部交流册，二〇二五年正式创刊。截至本期，已出版三卷，累计刊发文章四十余篇。
+《淮联百合期刊》前身为内部交流册，二〇二五年正式创刊。截至本期，已出版三卷，累计刊发文章四十余篇。
 
 四、档案说明
 
@@ -352,7 +352,7 @@ async function main() {
       abstract:
         "本文记录二〇二六年春夏两季在淮安运河段采集船工号子的过程，附采录说明、曲词整理与若干方法反思。",
       keywords: "船工号子；田野录音；非遗；运河",
-      category: "HISTORY",
+      category: "ORIGINAL",
       content:
         "一、缘起\n\n二〇二六年四月，我们在清江浦一带遇到仍在从事航运的老人。交谈中得知，完整的船工号子已经很难听到。\n\n二、采集方法\n\n我们采用半结构化访谈与现场录音相结合的方式，共完成九次访谈，累计录音七小时。\n\n三、初步整理\n\n号子的曲词多与水流、风向和装卸有关，具有明显的劳动节奏。部分唱词存在不同版本，需要进一步比对。\n\n四、方法反思\n\n录音并不等于保存。如何让这些声音回到具体的生活场景，是后续工作的重点。",
       status: "UNDER_REVIEW",
@@ -376,7 +376,7 @@ async function main() {
       abstract:
         "本文结合校园影像工作坊的实践，讨论短视频媒介如何改变地方影像的记录方式，以及青年创作者在其中面临的速度焦虑。",
       keywords: "短视频；影像志；地方；媒介实践",
-      category: "CULTURE",
+      category: "ORIGINAL",
       content:
         "一、项目背景\n\n工作坊在2026年春季学期启动，共有十二位同学参与，完成短片九部。\n\n二、媒介的速度\n\n短视频的时长限制改变了叙事节奏，也改变了拍摄者对“值得记录”的判断。\n\n三、地方的可见性\n\n镜头让一些日常空间变得可见，同时也可能把复杂的地方经验压缩为标签。\n\n四、结语\n\n影像志的价值，或许在于保留犹豫和停顿，而不是追求即时的传播效果。",
       status: "SUBMITTED",
@@ -396,9 +396,9 @@ async function main() {
   await prisma.announcement.createMany({
     data: [
       {
-        title: "《淮联百合学刊》2026 年第 2 期征稿启事",
+        title: "《淮联百合期刊》2026 年第 2 期征稿启事",
         content:
-          "本期专题为“地方记忆的当代表达”，欢迎文学研究、历史考据、文化观察与艺术评论类稿件。来稿请附摘要、关键词与作者简介，篇幅以 4000—12000 字为宜。截稿日期：2026 年 12 月 20 日。",
+          "本期专题为“地方记忆的当代表达”，欢迎同人、原创、短篇连载与长篇连载类稿件。来稿请附摘要、关键词与作者简介，篇幅以 4000—12000 字为宜。截稿日期：2026 年 12 月 20 日。",
         pinned: true,
         authorId: admin.id,
         publishedAt: new Date("2026-09-28"),
@@ -432,7 +432,7 @@ async function main() {
       school: "淮安大学文学院",
       major: "中国现当代文学",
       reason:
-        "希望参与学刊的编辑与读书会活动，并在地方文献整理方面做一些基础工作。",
+        "希望参与期刊的编辑与读书会活动，并在地方文献整理方面做一些基础工作。",
       status: "PENDING",
       createdAt: new Date("2026-10-05"),
     },

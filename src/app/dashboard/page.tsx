@@ -54,11 +54,11 @@ export default async function DashboardPage({ searchParams }: Props) {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Overview</p>
-          <h2 className="mt-2 font-serif text-3xl text-ink-900">
+          <h2 className="mt-2 font-serif text-2xl sm:text-3xl text-ink-900">
             你好，{user.name}
           </h2>
           <p className="mt-2 text-sm text-ink-700/65">
-            {user.affiliation ?? "欢迎来到淮联百合学刊"} · 账号创建于{" "}
+            {user.affiliation ?? "欢迎来到淮联百合期刊"} · 账号创建于{" "}
             {formatDate(user.createdAt)}
           </p>
         </div>
@@ -74,7 +74,7 @@ export default async function DashboardPage({ searchParams }: Props) {
           { label: "已刊发", value: publishedCount },
         ].map((stat) => (
           <div key={stat.label} className="card p-5">
-            <p className="font-serif text-3xl text-ink-900">{stat.value}</p>
+            <p className="font-serif text-2xl sm:text-3xl text-ink-900">{stat.value}</p>
             <p className="mt-1 text-[10px] uppercase tracking-[0.16em] text-ink-700/50">
               {stat.label}
             </p>
@@ -191,6 +191,12 @@ export default async function DashboardPage({ searchParams }: Props) {
                 <dd className="text-ink-800">{ROLE_LABELS[user.role]}</dd>
               </div>
             </dl>
+            <Link
+              href="/dashboard/profile"
+              className="mt-4 inline-flex text-[11px] text-crimson-600 no-underline"
+            >
+              编辑个人资料 →
+            </Link>
           </div>
         </div>
       </div>

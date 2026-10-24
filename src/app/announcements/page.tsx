@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "公告",
-  description: "《淮联百合学刊》征稿、活动与编辑部公告。",
+  description: "《淮联百合期刊》征稿、活动与编辑部公告。",
 };
 
 export default async function AnnouncementsPage() {

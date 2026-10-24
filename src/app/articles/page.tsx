@@ -28,6 +28,7 @@ export default async function ArticlesPage({
   const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
 
   const where = {
+    deletedAt: null,
     ...(category ? { category } : {}),
     ...(q
       ? {

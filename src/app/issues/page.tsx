@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { EmptyState } from "@/components/ui";
@@ -8,8 +9,13 @@ export const dynamic = "force-dynamic";
 
 export default async function IssuesPage() {
   const issues = await prisma.issue.findMany({
+    where: { archivedAt: null },
     orderBy: { publishedAt: "desc" },
-    include: { _count: { select: { articles: true } } },
+    include: {
+      _count: {
+        select: { articles: { where: { deletedAt: null } } },
+      },
+    },
   });
 
   return (
@@ -33,7 +39,19 @@ export default async function IssuesPage() {
                 href={`/issues/${issue.id}`}
                 className="group block no-underline"
               >
-                <div className="relative overflow-hidden bg-ink-950 p-7 text-paper-50 shadow-paper transition-transform group-hover:-translate-y-1">
+                <div className="relative isolate overflow-hidden bg-ink-950 p-7 text-paper-50 shadow-paper transition-transform group-hover:-translate-y-1">
+                  {issue.coverImage && (
+                    <>
+                      <Image
+                        src={issue.coverImage}
+                        alt=""
+                        fill
+                        unoptimized
+                        className="-z-10 object-cover opacity-45"
+                      />
+                      <div className="-z-10 absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/20" />
+                    </>
+                  )}
                   <div className="absolute right-3 top-2 font-serif text-8xl text-paper-50/[0.04]">
                     百
                   </div>
@@ -46,7 +64,7 @@ export default async function IssuesPage() {
                     </span>
                   </div>
                   <p className="mt-12 font-serif text-xl tracking-[0.14em]">
-                    淮联百合学刊
+                    淮联百合期刊
                   </p>
                   <p className="mt-2 text-[10px] tracking-[0.14em] text-paper-100/45">
                     {issueLabel(issue)}

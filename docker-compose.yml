@@ -1,0 +1,41 @@
+name: hlbh
+
+services:
+  app:
+    build: .
+    container_name: hlbh-app
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATABASE_URL: "file:/data/hlbh.db"
+    volumes:
+      - hlbh_data:/data
+      - uploads_data:/app/public/uploads
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: hlbh-caddy
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  hlbh_data:
+  uploads_data:
+  caddy_data:
+  caddy_config:

@@ -14,3 +14,13 @@ Thumbs.db
 .vercel
 next-env.d.ts
 tsconfig.tsbuildinfo
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Android app build artifacts / local configuration
+android-app/node_modules/
+android-app/dist/
+android-app/android/.gradle/
+android-app/android/build/
+android-app/android/app/build/
+android-app/android/local.properties

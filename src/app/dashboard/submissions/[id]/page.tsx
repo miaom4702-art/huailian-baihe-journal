@@ -9,6 +9,7 @@ import {
   type SubmissionStatus,
 } from "@/lib/constants";
 import { prisma } from "@/lib/db";
+import { SITE_CONTACT_EMAIL } from "@/lib/site";
 import {
   categoryLabel,
   formatDate,
@@ -27,7 +28,7 @@ export default async function SubmissionDetailPage({ params }: Props) {
   const submission = await prisma.submission.findFirst({
     where: { id, userId: user.id },
     include: {
-      article: { select: { slug: true, title: true } },
+      article: { select: { slug: true, title: true, deletedAt: true } },
       reviews: {
         orderBy: { createdAt: "asc" },
         include: { editor: { select: { name: true, role: true } } },
@@ -64,7 +65,7 @@ export default async function SubmissionDetailPage({ params }: Props) {
             {statusLabel(submission.status)}
           </span>
         </div>
-        <h2 className="mt-3 font-serif text-3xl leading-snug text-ink-900">
+        <h2 className="mt-3 font-serif text-2xl sm:text-3xl leading-snug text-ink-900">
           {submission.title}
         </h2>
         <p className="mt-2 text-[11px] text-ink-700/55">
@@ -87,7 +88,7 @@ export default async function SubmissionDetailPage({ params }: Props) {
         <div>
           <h3 className="font-serif text-lg text-ink-900">摘要</h3>
           <p className="mt-2 text-[13px] leading-7 text-ink-700/80">
-            {submission.abstract}
+            {submission.abstract || "未填写摘要。"}
           </p>
 
           <h3 className="mt-8 font-serif text-lg text-ink-900">正文</h3>
@@ -132,17 +133,21 @@ export default async function SubmissionDetailPage({ params }: Props) {
           {submission.article && (
             <div className="mt-4 border border-crimson-600/20 bg-crimson-600/5 p-5">
               <p className="text-[10px] uppercase tracking-[0.18em] text-crimson-700/70">
-                Published
+                {submission.article.deletedAt ? "Archived" : "Published"}
               </p>
               <p className="mt-2 font-serif text-sm text-ink-900">
-                本文已正式刊发
+                {submission.article.deletedAt
+                  ? "文章已由编辑部下架"
+                  : "本文已正式刊发"}
               </p>
-              <Link
-                href={`/articles/${submission.article.slug}`}
-                className="mt-3 inline-flex text-[11px] text-crimson-600 no-underline"
-              >
-                阅读文章 →
-              </Link>
+              {!submission.article.deletedAt && (
+                <Link
+                  href={`/articles/${submission.article.slug}`}
+                  className="mt-3 inline-flex text-[11px] text-crimson-600 no-underline"
+                >
+                  阅读文章 →
+                </Link>
+              )}
             </div>
           )}
 
@@ -150,7 +155,7 @@ export default async function SubmissionDetailPage({ params }: Props) {
             <div className="mt-4 border border-orange-200 bg-orange-50 p-5">
               <p className="text-[12px] font-medium text-orange-800">需要修改</p>
               <p className="mt-1.5 text-[11px] leading-5 text-orange-800/75">
-                请根据编辑部意见修改后，将修改稿发送至 editor@hlbh.org，
+                请根据编辑部意见修改后，将修改稿发送至 {SITE_CONTACT_EMAIL}，
                 并在邮件中逐条说明修改情况。
               </p>
             </div>

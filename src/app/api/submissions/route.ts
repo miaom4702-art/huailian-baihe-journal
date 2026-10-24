@@ -7,6 +7,7 @@ import { enforceRateLimit } from "@/lib/rate-limit";
 import {
   assertSameOrigin,
   handleApiError,
+  HttpError,
   json,
   parseBody,
 } from "@/lib/security";
@@ -20,14 +21,26 @@ export async function POST(req: NextRequest) {
 
     const data = await parseBody(req, submissionSchema);
 
+    if (data.serialId) {
+      const serial = await prisma.serial.findFirst({
+        where: { id: data.serialId, authorId: user.id },
+        select: { id: true },
+      });
+      if (!serial) {
+        throw new HttpError(422, "连载合集不存在或不属于当前账号");
+      }
+    }
+
     const submission = await prisma.submission.create({
       data: {
         userId: user.id,
         title: data.title,
-        abstract: data.abstract,
+        abstract: data.abstract ?? "",
         keywords: data.keywords,
         category: data.category,
         content: data.content,
+        serialId: data.serialId ?? null,
+        illustrations: JSON.stringify(data.illustrations ?? []),
         status: "SUBMITTED",
         reviews: {
           create: {

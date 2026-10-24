@@ -30,7 +30,7 @@ export default async function AdminMembersPage() {
     <div>
       <header>
         <p className="eyebrow">Membership</p>
-        <h2 className="mt-2 font-serif text-3xl text-ink-900">入会审核</h2>
+        <h2 className="mt-2 font-serif text-2xl sm:text-3xl text-ink-900">入会审核</h2>
         <p className="mt-2 text-sm text-ink-700/65">
           通过申请后，系统会自动为该账号标记会员身份（若申请已关联账号）。
         </p>

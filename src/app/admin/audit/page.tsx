@@ -19,7 +19,7 @@ export default async function AdminAuditPage() {
     <div>
       <header>
         <p className="eyebrow">Audit Log</p>
-        <h2 className="mt-2 font-serif text-3xl text-ink-900">审计日志</h2>
+        <h2 className="mt-2 font-serif text-2xl sm:text-3xl text-ink-900">审计日志</h2>
         <p className="mt-2 text-sm text-ink-700/65">
           记录登录、投稿、审稿、刊发、角色变更等关键操作，最近 150 条。
         </p>

@@ -27,13 +27,16 @@ export default async function AdminUsersPage() {
     <div>
       <header>
         <p className="eyebrow">Users & Roles</p>
-        <h2 className="mt-2 font-serif text-3xl text-ink-900">用户与角色</h2>
+        <h2 className="mt-2 font-serif text-2xl sm:text-3xl text-ink-900">用户与角色</h2>
         <p className="mt-2 text-sm text-ink-700/65">
           角色变更即时生效，并写入审计日志。为避免权限丢失，不能修改自己的角色。
         </p>
       </header>
 
       <div className="mt-6 flex flex-wrap gap-3 text-[11px] text-ink-700/55">
+        <span className="rounded-full bg-ink-900 px-3 py-1 font-medium text-paper-50">
+          总注册 {users.length} 人
+        </span>
         {Object.entries(ROLE_LABELS).map(([role, label]) => (
           <span key={role} className="rounded-full bg-ink-900/5 px-3 py-1">
             {label}：

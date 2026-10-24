@@ -3,16 +3,23 @@ import Link from "next/link";
 
 import { SubmissionForm } from "@/components/submission-form";
 import { requireUser } from "@/lib/auth";
+import { prisma } from "@/lib/db";
+import { SITE_CONTACT_EMAIL } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "投稿",
-  description: "向《淮联百合学刊》提交稿件，查看栏目设置、格式要求与审稿流程。",
+  description: "向《淮联百合期刊》提交稿件，查看栏目设置、格式要求与审稿流程。",
 };
 
 export const dynamic = "force-dynamic";
 
 export default async function SubmitPage() {
   const user = await requireUser();
+  const serials = await prisma.serial.findMany({
+    where: { authorId: user.id },
+    orderBy: { updatedAt: "desc" },
+    select: { id: true, title: true, coverImage: true },
+  });
 
   return (
     <div className="wrap py-14 lg:py-20">
@@ -38,7 +45,7 @@ export default async function SubmitPage() {
       </div>
 
       <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
-        <SubmissionForm />
+        <SubmissionForm serials={serials} />
 
         <aside className="space-y-6">
           <div className="card p-6">
@@ -77,7 +84,7 @@ export default async function SubmitPage() {
           <div className="bg-ink-950 p-6 text-paper-100/70">
             <p className="font-serif text-lg text-paper-50">需要帮助？</p>
             <p className="mt-2 text-[11px] leading-6">
-              如果你对栏目选择或格式有疑问，欢迎先发邮件至 editor@hlbh.org，
+              如果你对栏目选择或格式有疑问，欢迎先发邮件至 {SITE_CONTACT_EMAIL}，
               附上标题与摘要，我们会尽快回复。
             </p>
           </div>

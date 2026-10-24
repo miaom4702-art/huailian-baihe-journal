@@ -40,6 +40,21 @@ export function statusLabel(value: string) {
   return STATUS_LABELS[value as SubmissionStatus] ?? value;
 }
 
+export function parseImageList(value: string | null | undefined) {
+  if (!value) return [];
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter(
+      (item): item is string =>
+        typeof item === "string" &&
+        /^\/uploads\/[A-Za-z0-9-]+\.(png|jpg|jpeg|webp)$/.test(item),
+    );
+  } catch {
+    return [];
+  }
+}
+
 export function readingTime(content: string) {
   const chars = content.replace(/\s/g, "").length;
   return Math.max(1, Math.round(chars / 400));

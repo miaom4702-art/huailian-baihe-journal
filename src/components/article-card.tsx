@@ -39,9 +39,11 @@ export function ArticleCard({ article, index }: ArticleCardProps) {
             {article.title}
           </Link>
         </h3>
-        <p className="mt-2 line-clamp-2 text-[13px] leading-6 text-ink-700/75">
-          {excerpt(article.abstract, 110)}
-        </p>
+        {article.abstract && (
+          <p className="mt-2 line-clamp-2 text-[13px] leading-6 text-ink-700/75">
+            {excerpt(article.abstract, 110)}
+          </p>
+        )}
       </div>
     </article>
   );

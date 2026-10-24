@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AuthForm } from "@/components/auth-form";
+import { MoonPair, Petals } from "@/components/lily-motifs";
 import { getCurrentUser } from "@/lib/auth";
 import { safeNextPath } from "@/lib/utils";
 
@@ -21,8 +22,10 @@ export default async function LoginPage({ searchParams }: Props) {
   const next = safeNextPath(params.next);
 
   return (
-    <div className="wrap grid gap-12 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:py-24">
-      <section className="hidden lg:block">
+    <div className="wrap relative grid overflow-hidden gap-12 py-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:py-24">
+      <Petals count={4} className="opacity-40" />
+      <MoonPair className="pointer-events-none absolute right-0 top-8 hidden w-[260px] opacity-30 lg:block" />
+      <section className="relative hidden lg:block">
         <p className="eyebrow">Welcome back</p>
         <h1 className="mt-4 font-serif text-4xl leading-snug tracking-wide text-ink-900">
           欢迎回到

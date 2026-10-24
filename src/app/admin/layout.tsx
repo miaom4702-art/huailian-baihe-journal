@@ -16,10 +16,15 @@ export default async function AdminLayout({
   const items = [
     { href: "/admin", label: "工作台", exact: true },
     { href: "/admin/submissions", label: "稿件处理" },
+    { href: "/admin/revisions", label: "文章修订" },
+    { href: "/admin/serials", label: "连载管理" },
     { href: "/admin/issues", label: "期刊管理" },
     { href: "/admin/members", label: "入会审核" },
     ...(user.role === "ADMIN"
       ? [
+          { href: "/admin/announcements", label: "公告管理" },
+          { href: "/admin/articles", label: "文章管理" },
+          { href: "/admin/associations", label: "协会管理" },
           { href: "/admin/users", label: "用户与角色" },
           { href: "/admin/audit", label: "审计日志" },
         ]

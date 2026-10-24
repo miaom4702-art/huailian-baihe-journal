@@ -13,7 +13,10 @@ export default async function MySubmissionsPage() {
   const submissions = await prisma.submission.findMany({
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
-    include: { article: { select: { slug: true } }, _count: { select: { reviews: true } } },
+    include: {
+      article: { select: { slug: true, deletedAt: true } },
+      _count: { select: { reviews: true } },
+    },
   });
 
   return (
@@ -21,7 +24,7 @@ export default async function MySubmissionsPage() {
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">Submissions</p>
-          <h2 className="mt-2 font-serif text-3xl text-ink-900">我的投稿</h2>
+          <h2 className="mt-2 font-serif text-2xl sm:text-3xl text-ink-900">我的投稿</h2>
           <p className="mt-2 text-sm text-ink-700/65">
             共 {submissions.length} 篇。点击标题查看审稿时间线。
           </p>
@@ -66,7 +69,9 @@ export default async function MySubmissionsPage() {
                       </Link>
                       {submission.article && (
                         <p className="mt-0.5 text-[10px] text-crimson-600">
-                          已生成文章
+                          {submission.article.deletedAt
+                            ? "文章已下架"
+                            : "已生成文章"}
                         </p>
                       )}
                     </td>

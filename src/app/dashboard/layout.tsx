@@ -10,6 +10,9 @@ export const dynamic = "force-dynamic";
 const items = [
   { href: "/dashboard", label: "概览", exact: true },
   { href: "/dashboard/submissions", label: "我的投稿" },
+  { href: "/dashboard/articles", label: "文章数据" },
+  { href: "/dashboard/serials", label: "我的连载" },
+  { href: "/dashboard/profile", label: "个人资料" },
   { href: "/submit", label: "新建投稿" },
   { href: "/membership", label: "入会申请" },
 ];

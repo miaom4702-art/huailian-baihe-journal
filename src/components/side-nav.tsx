@@ -11,7 +11,7 @@ export function SideNav({ items }: { items: SideNavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-1 overflow-x-auto lg:flex-col lg:overflow-visible">
+    <nav className="flex flex-wrap gap-1 lg:flex-col">
       {items.map((item) => {
         const active = item.exact
           ? pathname === item.href

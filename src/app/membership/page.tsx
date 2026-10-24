@@ -5,7 +5,7 @@ import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = {
   title: "申请入会",
-  description: "申请加入淮安大学淮联百合同好会，参与读书会、写作工坊与《淮联百合学刊》的编辑工作。",
+  description: "申请加入淮安大学淮联百合同好会，参与读书会、写作工坊与《淮联百合期刊》的编辑工作。",
 };
 
 export const dynamic = "force-dynamic";
@@ -41,7 +41,7 @@ export default async function MembershipPage() {
             <h2 className="mt-2 font-serif text-xl text-ink-900">会员可以参与</h2>
             <ul className="mt-4 space-y-3 text-[13px] leading-6 text-ink-700/75">
               <li>· 每月一次的共读与写作工坊</li>
-              <li>· 学刊的组稿、审稿与校对工作</li>
+              <li>· 期刊的组稿、审稿与校对工作</li>
               <li>· 地方文献的田野调查与口述史采集</li>
               <li>· “百合杯”校园文学奖的评审与活动筹备</li>
               <li>· 与校外书店、出版社的联合活动</li>

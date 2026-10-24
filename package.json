@@ -1,8 +1,8 @@
 {
   "name": "huailian-baihe-journal",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
-  "description": "淮安大学淮联百合同好会《淮联百合学刊》期刊网站",
+  "description": "淮安大学淮联百合同好会《淮联百合期刊》期刊网站",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "db:push": "prisma db push",
     "db:seed": "tsx prisma/seed.ts",
+    "db:clear-content": "tsx prisma/clear-content.ts",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"
   },

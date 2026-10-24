@@ -1,11 +1,13 @@
 import Link from "next/link";
 
 import { Badge } from "@/components/ui";
+import { prisma } from "@/lib/db";
+import { SITE_CONTACT_EMAIL, SITE_GROUP_NUMBER } from "@/lib/site";
 
 export const metadata = {
   title: "关于",
   description:
-    "《淮联百合学刊》由淮安大学淮联百合同好会主办，坚持学术性与可读性并重，关注校园写作与地方记忆。",
+    "《淮联百合期刊》由淮安大学淮联百合同好会主办，坚持专业性与可读性并重，关注校园写作与地方记忆。",
 };
 
 const board = [
@@ -19,32 +21,31 @@ const board = [
 
 const sections = [
   {
-    title: "文学研究",
-    text: "现当代文学、比较文学与文艺理论的专题论文，尤其欢迎结合地方文本的细读。",
+    title: "同人",
+    text: "基于既有作品、人物或世界观的二次创作，欢迎短文、片段与完整的同人故事。",
   },
   {
-    title: "历史考据",
-    text: "运河、城市与校园历史的档案研究、口述史与田野札记，强调材料来源与论证过程。",
+    title: "原创",
+    text: "原创小说、散文、随笔与独立世界观写作，题材不限，鼓励真诚而具体的表达。",
   },
   {
-    title: "文化观察",
-    text: "青年文化、媒介实践与社团生活的观察性写作，允许随笔与评论的混合文体。",
+    title: "短篇连载",
+    text: "适合连续刊载的短篇故事，单篇可独立阅读，也可作为系列的一部分。",
   },
   {
-    title: "艺术评论",
-    text: "视觉艺术、影像、音乐与戏剧评论，要求具体作品分析与明确的审美判断。",
-  },
-  {
-    title: "学术综述",
-    text: "围绕某一议题的研究述评，需呈现清晰的学术脉络与明确的问题意识。",
-  },
-  {
-    title: "社团动态",
-    text: "同好会活动纪略、成员访谈与刊物史料整理，为共同体留下可查的记录。",
+    title: "长篇连载",
+    text: "篇幅较长、结构完整的连载作品，投稿时请附整体大纲与后续更新计划。",
   },
 ];
 
-export default function AboutPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AboutPage() {
+  const associations = await prisma.association.findMany({
+    where: { published: true },
+    orderBy: [{ sortOrder: "asc" }, { createdAt: "asc" }],
+  });
+
   return (
     <div className="wrap py-14 lg:py-20">
       <header className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
@@ -57,7 +58,7 @@ export default function AboutPage() {
           </h1>
           <p className="mt-6 max-w-xl text-sm leading-8 text-ink-700/75">
             淮联百合同好会成立于 2016 年，是淮安大学历史最久的文学社团之一。
-            2025 年，同好会创办《淮联百合学刊》，希望把零散的阅读、讨论与写作，
+            2025 年，同好会创办《淮联百合期刊》，希望把零散的阅读、讨论与写作，
             整理为可以留存、可以被引用的文本。
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
@@ -94,8 +95,8 @@ export default function AboutPage() {
         </div>
         <div className="space-y-5 text-sm leading-8 text-ink-700/80">
           <p>
-            本刊坚持学术性与可读性并重。一方面，我们要求来稿遵守基本的学术规范，
-            注明材料来源，尊重已有研究；另一方面，我们也拒绝把“学术”当作晦涩的借口，
+            本刊坚持专业性与可读性并重。一方面，我们要求来稿遵守基本的写作规范，
+            注明材料来源，尊重已有研究；另一方面，我们也拒绝把“专业”当作晦涩的借口，
             希望文章能够被非专业读者读懂。
           </p>
           <p>
@@ -146,6 +147,44 @@ export default function AboutPage() {
         </p>
       </section>
 
+      <section className="mt-16">
+        <p className="eyebrow">Associations</p>
+        <h2 className="mt-3 font-serif text-2xl text-ink-900">关联协会与社团</h2>
+        {associations.length === 0 ? (
+          <p className="mt-4 text-xs text-ink-700/50">
+            协会资料正在整理中。
+          </p>
+        ) : (
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {associations.map((association) => (
+              <article key={association.id} className="card p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="font-serif text-base text-ink-900">
+                    {association.name}
+                  </h3>
+                  {association.shortName && (
+                    <Badge className="bg-ink-900/5 text-ink-700 ring-ink-900/10">
+                      {association.shortName}
+                    </Badge>
+                  )}
+                </div>
+                <p className="mt-3 text-xs leading-6 text-ink-700/70">
+                  {association.description}
+                </p>
+                {(association.email || association.groupNumber) && (
+                  <div className="mt-4 space-y-1 border-t border-ink-900/10 pt-3 text-[10px] text-ink-700/50">
+                    {association.email && <p>邮箱：{association.email}</p>}
+                    {association.groupNumber && (
+                      <p>群号：{association.groupNumber}</p>
+                    )}
+                  </div>
+                )}
+              </article>
+            ))}
+          </div>
+        )}
+      </section>
+
       <section className="mt-16 grid gap-8 border-t border-ink-900/10 pt-12 lg:grid-cols-2">
         <div>
           <p className="eyebrow">Guidelines</p>
@@ -163,7 +202,8 @@ export default function AboutPage() {
           <h2 className="mt-3 font-serif text-2xl text-ink-900">联系我们</h2>
           <div className="mt-5 space-y-2 text-sm leading-7 text-ink-700/80">
             <p>地址：江苏省淮安市 · 淮安大学淮联百合同好会编辑部</p>
-            <p>邮箱：editor@hlbh.org</p>
+            <p>邮箱：{SITE_CONTACT_EMAIL}</p>
+            <p>同好会群：{SITE_GROUP_NUMBER}</p>
             <p>办公时间：每周三、周五 14:00—17:00</p>
             <p className="text-[11px] text-ink-700/45">
               ISSN 0000-0000（预留）· 本页信息为演示内容

@@ -54,6 +54,8 @@ export async function PATCH(
         content: true,
         status: true,
         editorNote: true,
+        serialId: true,
+        illustrations: true,
       },
     });
 
@@ -121,6 +123,8 @@ export async function PATCH(
             submissionId: id,
             authorId: submission.userId,
             issueId: data.issueId ?? null,
+            serialId: submission.serialId,
+            illustrations: submission.illustrations,
           },
           select: { id: true, slug: true },
         });

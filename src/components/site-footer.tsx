@@ -1,4 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
+
+import { SITE_CONTACT_EMAIL, SITE_GROUP_NUMBER } from "@/lib/site";
 
 export function SiteFooter() {
   return (
@@ -6,12 +9,16 @@ export function SiteFooter() {
       <div className="wrap grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full border border-gold-400/50 font-serif text-lg text-gold-300">
-              百
-            </span>
+            <Image
+              src="/logo.png"
+              alt="淮联百合同好会徽标"
+              width={80}
+              height={80}
+              className="h-11 w-11 rounded-full bg-white object-cover"
+            />
             <div>
               <p className="font-serif text-lg tracking-wider text-paper-50">
-                淮联百合学刊
+                淮联百合期刊
               </p>
               <p className="text-[9px] uppercase tracking-[0.22em] text-paper-100/40">
                 Journal of Huailian Baihe
@@ -32,6 +39,7 @@ export function SiteFooter() {
             {[
               ["/articles", "文章浏览"],
               ["/issues", "往期期刊"],
+              ["/serials", "连载合集"],
               ["/announcements", "公告动态"],
               ["/about", "关于我们"],
             ].map(([href, label]) => (
@@ -54,9 +62,16 @@ export function SiteFooter() {
           <ul className="mt-4 space-y-2.5 text-xs text-paper-100/60">
             <li>江苏省淮安市 · 淮安大学</li>
             <li>淮联百合同好会编辑部</li>
-            <li>editor@hlbh.org</li>
+            <li>{SITE_CONTACT_EMAIL}</li>
+            <li>同好会群：{SITE_GROUP_NUMBER}</li>
             <li>ISSN 0000-0000（预留）</li>
           </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-paper-50/10">
+        <div className="wrap py-5 text-center font-serif text-[13px] tracking-[0.12em] text-paper-100/45">
+          月光落在书页上，故事才刚刚开始。
         </div>
       </div>
 

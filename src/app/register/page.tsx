@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AuthForm } from "@/components/auth-form";
+import { MoonPair, Petals } from "@/components/lily-motifs";
 import { getCurrentUser } from "@/lib/auth";
 
 export const metadata: Metadata = { title: "注册" };
@@ -13,8 +14,10 @@ export default async function RegisterPage() {
   if (user) redirect("/dashboard");
 
   return (
-    <div className="wrap grid gap-12 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-24">
-      <section className="card mx-auto w-full max-w-md p-7 sm:p-9">
+    <div className="wrap relative grid overflow-hidden gap-12 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:py-24">
+      <Petals count={4} className="opacity-40" />
+      <MoonPair className="pointer-events-none absolute right-0 top-6 hidden w-[260px] opacity-25 lg:block" />
+      <section className="card relative mx-auto w-full max-w-md p-7 sm:p-9">
         <p className="eyebrow">Create account</p>
         <h2 className="mt-2 font-serif text-2xl text-ink-900">注册账号</h2>
         <p className="mt-2 text-xs text-ink-700/60">

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -12,7 +13,9 @@ type Props = { params: Promise<{ id: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
-  const issue = await prisma.issue.findUnique({ where: { id } });
+  const issue = await prisma.issue.findFirst({
+    where: { id, archivedAt: null },
+  });
   if (!issue) return { title: "期刊未找到" };
   return {
     title: `${issue.title}（${issueLabel(issue)}）`,
@@ -22,10 +25,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function IssueDetailPage({ params }: Props) {
   const { id } = await params;
-  const issue = await prisma.issue.findUnique({
-    where: { id },
+  const issue = await prisma.issue.findFirst({
+    where: { id, archivedAt: null },
     include: {
       articles: {
+        where: { deletedAt: null },
         orderBy: { publishedAt: "asc" },
         include: { author: { select: { name: true, affiliation: true } } },
       },
@@ -45,14 +49,26 @@ export default async function IssueDetailPage({ params }: Props) {
       />
 
       <header className="grid gap-8 border-b border-ink-900/10 pb-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
-        <div className="relative max-w-sm bg-ink-950 p-8 text-paper-50 shadow-paper">
+        <div className="relative isolate max-w-sm bg-ink-950 p-8 text-paper-50 shadow-paper">
+          {issue.coverImage && (
+            <>
+              <Image
+                src={issue.coverImage}
+                alt=""
+                fill
+                unoptimized
+                className="-z-10 object-cover opacity-45"
+              />
+              <div className="-z-10 absolute inset-0 bg-gradient-to-t from-ink-950 via-ink-950/70 to-ink-950/20" />
+            </>
+          )}
           <div className="absolute right-4 top-2 font-serif text-7xl text-paper-50/[0.04]">
             百
           </div>
           <p className="text-[9px] uppercase tracking-[0.24em] text-gold-300/70">
             Journal of Huailian Baihe
           </p>
-          <p className="mt-10 font-serif text-2xl tracking-[0.14em]">淮联百合学刊</p>
+          <p className="mt-10 font-serif text-2xl tracking-[0.14em]">淮联百合期刊</p>
           <p className="mt-2 text-[10px] text-paper-100/50">{issueLabel(issue)}</p>
           <div className="my-6 h-px w-full bg-gold-400/25" />
           <p className="font-serif text-lg leading-8">{issue.title}</p>

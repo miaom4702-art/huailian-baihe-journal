@@ -32,7 +32,8 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
       take: 80,
       include: {
         author: { select: { name: true, email: true } },
-        article: { select: { slug: true } },
+        article: { select: { slug: true, deletedAt: true } },
+        serial: { select: { title: true, slug: true } },
       },
     }),
     prisma.issue.findMany({
@@ -57,7 +58,7 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
     <div>
       <header>
         <p className="eyebrow">Submissions</p>
-        <h2 className="mt-2 font-serif text-3xl text-ink-900">稿件处理</h2>
+        <h2 className="mt-2 font-serif text-2xl sm:text-3xl text-ink-900">稿件处理</h2>
         <p className="mt-2 text-sm text-ink-700/65">
           所有状态变更都会写入审稿时间线与审计日志。刊发操作将同步生成公开文章。
         </p>
@@ -94,7 +95,11 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
           <EmptyState title="没有符合条件的稿件" description="切换筛选条件后再试。" />
         ) : (
           submissions.map((submission) => (
-            <article key={submission.id} className="card p-5">
+            <article
+              key={submission.id}
+              id={`submission-${submission.id}`}
+              className="card scroll-mt-28 p-5"
+            >
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2 text-[10px] text-ink-700/50">
@@ -107,6 +112,14 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
                     </span>
                     <span>·</span>
                     <span>{formatDate(submission.createdAt)}</span>
+                    {submission.serial && (
+                      <>
+                        <span>·</span>
+                        <span className="text-crimson-600">
+                          连载：{submission.serial.title}
+                        </span>
+                      </>
+                    )}
                   </div>
                   <h3 className="mt-2 font-serif text-lg leading-7 text-ink-900">
                     {submission.title}
@@ -116,14 +129,19 @@ export default async function AdminSubmissionsPage({ searchParams }: Props) {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  {submission.article && (
-                    <Link
-                      href={`/articles/${submission.article.slug}`}
-                      className="text-[10px] text-crimson-600 no-underline"
-                    >
-                      查看文章
-                    </Link>
-                  )}
+                  {submission.article &&
+                    (submission.article.deletedAt ? (
+                      <span className="text-[10px] text-ink-700/45">
+                        文章已下架
+                      </span>
+                    ) : (
+                      <Link
+                        href={`/articles/${submission.article.slug}`}
+                        className="text-[10px] text-crimson-600 no-underline"
+                      >
+                        查看文章
+                      </Link>
+                    ))}
                   <span
                     className={`badge ${STATUS_TONE[submission.status as SubmissionStatus] ?? "bg-ink-900/5 text-ink-700 ring-ink-900/10"}`}
                   >

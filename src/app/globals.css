@@ -9,14 +9,20 @@
 
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 96px;
+    -webkit-text-size-adjust: 100%;
   }
 
   body {
     @apply bg-paper-50 text-ink-900 font-sans antialiased;
     background-image:
-      radial-gradient(circle at 12% 0%, rgba(200, 169, 106, 0.14), transparent 32rem),
-      radial-gradient(circle at 88% 8%, rgba(157, 34, 53, 0.07), transparent 28rem);
+      radial-gradient(circle at 12% 0%, rgba(239, 191, 146, 0.16), transparent 32rem),
+      radial-gradient(circle at 88% 8%, rgba(95, 166, 193, 0.12), transparent 28rem),
+      radial-gradient(circle at 78% 24%, rgba(142, 200, 221, 0.2), transparent 26rem),
+      radial-gradient(circle at 6% 78%, rgba(239, 191, 146, 0.08), transparent 30rem);
     background-attachment: fixed;
+    overflow-wrap: break-word;
+    -webkit-tap-highlight-color: transparent;
   }
 
   ::selection {
@@ -42,7 +48,7 @@
   }
 
   .card {
-    @apply rounded-sm border border-ink-900/10 bg-white/70 shadow-paper backdrop-blur-sm;
+    @apply min-w-0 rounded-sm border border-ink-900/10 bg-white/70 shadow-paper backdrop-blur-sm;
   }
 
   .btn {
@@ -102,10 +108,77 @@
   }
 }
 
+@keyframes petal-drift {
+  0% {
+    transform: translate3d(0, -18px, 0) rotate(8deg);
+  }
+  50% {
+    transform: translate3d(14px, 82px, 0) rotate(82deg);
+  }
+  100% {
+    transform: translate3d(-6px, 184px, 0) rotate(156deg);
+  }
+}
+
+@keyframes moon-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.lily-petal {
+  position: absolute;
+  border-radius: 100% 0 100% 0;
+  background: linear-gradient(
+    135deg,
+    rgba(95, 166, 193, 0.55),
+    rgba(239, 191, 146, 0.45)
+  );
+  filter: blur(0.2px);
+  animation: petal-drift 20s linear infinite;
+}
+
+.moon-breathe {
+  animation: moon-breathe 9s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lily-petal,
+  .moon-breathe {
+    animation: none !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  .btn,
+  .btn-primary,
+  .btn-crimson,
+  .btn-outline {
+    min-height: 42px;
+  }
+
+  .article-body p {
+    font-size: 16px;
+    line-height: 1.9;
+  }
+}
+
 @media print {
   header,
   footer,
-  .no-print {
+  .no-print,
+  .lily-petal,
+  .moon-breathe {
     display: none !important;
   }
 }

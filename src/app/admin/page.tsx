@@ -21,6 +21,8 @@ export default async function AdminHomePage() {
     pendingMembers,
     recentSubmissions,
     recentLogs,
+    userCount,
+    pendingRevisionCount,
   ] = await Promise.all([
     prisma.submission.groupBy({ by: ["status"], _count: { _all: true } }),
     prisma.article.count(),
@@ -36,6 +38,8 @@ export default async function AdminHomePage() {
       take: 6,
       include: { user: { select: { name: true } } },
     }),
+    prisma.user.count(),
+    prisma.articleRevision.count({ where: { status: "PENDING" } }),
   ]);
 
   const counts = Object.fromEntries(
@@ -69,20 +73,21 @@ export default async function AdminHomePage() {
     <div className="space-y-8">
       <header>
         <p className="eyebrow">Dashboard</p>
-        <h2 className="mt-2 font-serif text-3xl text-ink-900">编辑部工作台</h2>
+        <h2 className="mt-2 font-serif text-2xl sm:text-3xl text-ink-900">编辑部工作台</h2>
         <p className="mt-2 text-sm text-ink-700/65">
-          已刊文章 {articleCount} 篇 · 出版 {issueCount} 期
+          注册用户 {userCount} 人 · 已刊文章 {articleCount} 篇 · 出版{" "}
+          {issueCount} 期 · 待审文章修改 {pendingRevisionCount} 篇
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         {stats.map((stat) => (
           <Link
             key={stat.label}
             href={stat.href}
             className="card group p-5 no-underline transition-colors hover:border-crimson-600/30"
           >
-            <p className="font-serif text-3xl text-ink-900">{stat.value}</p>
+            <p className="font-serif text-2xl sm:text-3xl text-ink-900">{stat.value}</p>
             <p className="mt-1 text-[11px] text-ink-700/55">{stat.label}</p>
             <p className="mt-4 text-[10px] text-crimson-600 opacity-0 transition-opacity group-hover:opacity-100">
               前往处理 →
