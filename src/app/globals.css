@@ -146,6 +146,23 @@
   animation: moon-breathe 9s ease-in-out infinite;
 }
 
+.mobile-menu-panel {
+  top: calc(76px + env(safe-area-inset-top));
+  max-height: calc(100dvh - 76px - env(safe-area-inset-top));
+}
+
+/* iPhone / iPad Safari with viewport-fit=cover: keep the header below the notch / Dynamic Island. */
+@supports (-webkit-touch-callout: none) {
+  .site-header {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .mobile-menu-panel {
+    top: calc(76px + env(safe-area-inset-top));
+    max-height: calc(100dvh - 76px - env(safe-area-inset-top));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lily-petal,
   .moon-breathe {

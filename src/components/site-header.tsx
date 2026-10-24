@@ -22,7 +22,7 @@ export async function SiteHeader() {
   const user = await getCurrentUser();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-ink-900/10 bg-paper-50/85 backdrop-blur-md">
+    <header className="site-header sticky top-0 z-40 border-b border-ink-900/10 bg-paper-50/85 backdrop-blur-md">
       <div className="wrap flex h-[76px] items-center justify-between gap-2 sm:gap-4">
         <Link href="/" className="group flex min-w-0 items-center gap-2.5 no-underline sm:gap-3">
           <Image

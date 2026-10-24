@@ -66,7 +66,7 @@ export function MobileNav({
       {open && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 top-[76px] z-50 max-h-[calc(100dvh-76px)] overflow-y-auto border-t border-ink-900/10 bg-paper-50 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-4 shadow-xl"
+          className="mobile-menu-panel fixed inset-x-0 z-50 overflow-y-auto border-t border-ink-900/10 bg-paper-50 px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-4 shadow-xl"
         >
           <div className="grid grid-cols-2 gap-2">
             {items.map((item) => (

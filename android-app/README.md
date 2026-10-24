@@ -2,7 +2,7 @@
 
 ## 当前产物
 
-- 测试 APK：`D:\hlbh-app\dist\淮联百合期刊-debug.apk`
+- 测试 APK：`D:\hlbh-app\dist\淮联百合期刊-1.1.1-debug.apk`
 - 包名：`org.hlbh.journal`
 - 类型：Debug 测试包，已使用 Android 调试证书签名，可直接侧载安装
 - 加载地址：`https://journal.example.com`
@@ -14,7 +14,7 @@ Capacitor 8 + Android WebView。应用本身是移动端壳，内容加载线上
 
 ## 安装
 
-1. 将 `dist\淮联百合期刊-debug.apk` 传到 Android 手机；
+1. 将 `dist\淮联百合期刊-1.1.1-debug.apk` 传到 Android 手机；
 2. 允许“安装未知来源应用”；
 3. 安装并打开。若出现系统安全提示，是因为这是 Debug 测试签名，不是应用商店版本。
 
@@ -69,3 +69,4 @@ cd android
 - 未做原生推送、支付或离线缓存；
 - 未在真实手机上做最终安装测试（构建机没有连接 Android 设备）；
 - 当前加载的是临时域名，正式域名确定后需要修改并重新打包。
+
