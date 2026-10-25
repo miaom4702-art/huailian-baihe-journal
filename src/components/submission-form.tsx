@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { CATEGORIES, CATEGORY_LABELS } from "@/lib/constants";
 
@@ -30,6 +30,7 @@ async function uploadImage(file: File) {
 
 export function SubmissionForm({ serials }: { serials: SerialOption[] }) {
   const router = useRouter();
+  const submittingRef = useRef(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -111,6 +112,9 @@ export function SubmissionForm({ serials }: { serials: SerialOption[] }) {
       return;
     }
 
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
     const form = event.currentTarget;
     const formData = new FormData(form);
     setLoading(true);
@@ -168,6 +172,7 @@ export function SubmissionForm({ serials }: { serials: SerialOption[] }) {
     } catch {
       setError("网络异常，请检查连接后重试");
     } finally {
+      submittingRef.current = false;
       setLoading(false);
     }
   }

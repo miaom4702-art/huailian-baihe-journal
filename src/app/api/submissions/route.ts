@@ -21,6 +21,21 @@ export async function POST(req: NextRequest) {
 
     const data = await parseBody(req, submissionSchema);
 
+    const duplicate = await prisma.submission.findFirst({
+      where: {
+        userId: user.id,
+        title: data.title,
+        content: data.content,
+        createdAt: { gte: new Date(Date.now() - 2 * 60 * 1000) },
+      },
+      orderBy: { createdAt: "desc" },
+      select: { id: true, title: true, status: true, createdAt: true },
+    });
+
+    if (duplicate) {
+      return json({ ok: true, submission: duplicate, duplicate: true }, 200);
+    }
+
     if (data.serialId) {
       const serial = await prisma.serial.findFirst({
         where: { id: data.serialId, authorId: user.id },

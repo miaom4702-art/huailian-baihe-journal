@@ -22,6 +22,26 @@ export async function POST(req: NextRequest) {
 
     const data = await parseBody(req, serialSchema);
 
+    const duplicate = await prisma.serial.findFirst({
+      where: {
+        authorId: user.id,
+        title: data.title,
+        description: data.description,
+        createdAt: { gte: new Date(Date.now() - 2 * 60 * 1000) },
+      },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        slug: true,
+        title: true,
+        coverImage: true,
+      },
+    });
+
+    if (duplicate) {
+      return json({ ok: true, serial: duplicate, duplicate: true }, 200);
+    }
+
     const serial = await prisma.serial.create({
       data: {
         slug: createSerialSlug(data.title),
