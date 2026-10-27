@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { AiAssistant } from "@/components/ai-assistant";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -47,6 +48,7 @@ export default async function RootLayout({
           isLoggedIn={Boolean(user)}
           avatarImage={user?.avatarImage ?? null}
         />
+        <AiAssistant />
       </body>
     </html>
   );
