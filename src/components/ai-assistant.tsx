@@ -35,6 +35,8 @@ const MOOD_LABELS: Record<AssistantMood, string> = {
   loving: "在悄悄关心你",
 };
 
+const QUICK_PROMPTS = ["怎么投稿？", "有哪些栏目？", "推荐一篇作品", "介绍一下期刊"];
+
 const SCRIPT_URLS = [
   "/vendor/pixi.min.js",
   "/vendor/pixi-unsafe-eval.min.js",
@@ -382,6 +384,17 @@ export function AiAssistant() {
   }, [open]);
 
   useEffect(() => {
+    if (!open) return;
+    if (!window.matchMedia("(max-width: 639px)").matches) return;
+
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
+  useEffect(() => {
     if (!open || !canvasRef.current) return;
 
     let cancelled = false;
@@ -424,8 +437,8 @@ export function AiAssistant() {
     live2dRef.current?.setSpeaking(speaking);
   }, []);
 
-  const send = useCallback(async () => {
-    const text = input.trim();
+  const send = useCallback(async (textOverride?: string) => {
+    const text = (textOverride ?? input).trim();
     if (!text || loadingRef.current) return;
 
     const userMessage: ChatMessage = {
@@ -534,52 +547,64 @@ export function AiAssistant() {
       </button>
 
       {open && (
-        <section
-          ref={panelRef}
-          aria-label="月见八千代 AI 助手"
-          className="fixed bottom-[86px] left-3 right-3 z-[70] flex max-h-[calc(100dvh-104px)] flex-col overflow-hidden rounded-xl border border-ink-900/10 bg-paper-50 shadow-[0_24px_80px_rgba(14,42,56,0.24)] sm:bottom-24 sm:left-auto sm:right-6 sm:w-[390px]"
-        >
-          <div className="flex items-center justify-between border-b border-ink-900/8 bg-gradient-to-r from-[#eef6f8] via-paper-50 to-[#f7f0e8] px-4 py-3">
-            <div>
-              <p className="font-serif text-base font-semibold text-ink-900">月见八千代</p>
-              <p className="mt-0.5 text-[10px] tracking-wide text-ink-700/55">
-                「月读」的看板娘 · {MOOD_LABELS[mood]}
-              </p>
+        <>
+          <button
+            type="button"
+            aria-label="关闭助手"
+            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-[65] bg-ink-950/30 backdrop-blur-[1px] sm:hidden"
+          />
+          <section
+            ref={panelRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label="月见八千代 AI 助手"
+            className="fixed bottom-[calc(74px+env(safe-area-inset-bottom))] left-2 right-2 z-[70] flex h-[min(80dvh,700px)] flex-col overflow-hidden rounded-2xl border border-ink-900/10 bg-paper-50 shadow-[0_24px_80px_rgba(14,42,56,0.3)] sm:bottom-24 sm:left-auto sm:right-6 sm:h-auto sm:max-h-[calc(100dvh-120px)] sm:w-[390px] sm:rounded-xl"
+          >
+            <div className="flex justify-center pt-2 sm:hidden">
+              <span className="h-1 w-10 rounded-full bg-ink-900/15" />
             </div>
-            <div className="flex items-center gap-1">
-              <button
-                type="button"
-                onClick={() => setVoiceOn((value) => !value)}
-                className={`rounded-full border px-2.5 py-1 text-[10px] transition ${
-                  voiceOn
-                    ? "border-crimson-600/30 bg-crimson-600/10 text-crimson-700"
-                    : "border-ink-900/10 text-ink-700/55 hover:text-ink-900"
-                }`}
-                aria-pressed={voiceOn}
-              >
-                {voiceOn ? "语音开" : "语音关"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                className="flex h-7 w-7 items-center justify-center rounded-full text-lg leading-none text-ink-700/45 transition hover:bg-ink-900/5 hover:text-ink-900"
-                aria-label="关闭助手"
-              >
-                ×
-              </button>
+            <div className="flex items-center justify-between gap-3 border-b border-ink-900/10 bg-gradient-to-r from-[#eef6f8] via-paper-50 to-[#f7f0e8] px-4 py-3">
+              <div className="min-w-0">
+                <p className="truncate font-serif text-base font-semibold text-ink-900">月见八千代</p>
+                <p className="mt-0.5 truncate text-[10px] tracking-wide text-ink-700/60">
+                  「月读」的看板娘 · {MOOD_LABELS[mood]}
+                </p>
+              </div>
+              <div className="flex shrink-0 items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setVoiceOn((value) => !value)}
+                  className={`h-8 rounded-full border px-3 text-[11px] transition ${
+                    voiceOn
+                      ? "border-crimson-600/30 bg-crimson-600/10 text-crimson-700"
+                      : "border-ink-900/15 bg-white/50 text-ink-700/70 hover:text-ink-900"
+                  }`}
+                  aria-pressed={voiceOn}
+                >
+                  {voiceOn ? "语音开" : "语音关"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="flex h-9 w-9 items-center justify-center rounded-full bg-ink-900/5 text-xl leading-none text-ink-700/60 transition hover:bg-ink-900/10 hover:text-ink-900"
+                  aria-label="关闭助手"
+                >
+                  ×
+                </button>
+              </div>
             </div>
-          </div>
 
-          <div className="relative h-[238px] shrink-0 overflow-hidden bg-[radial-gradient(circle_at_50%_18%,rgba(158,204,218,0.35),transparent_55%),linear-gradient(180deg,#f4fafb_0%,#f7f2e9_100%)] sm:h-[270px]">
-            <canvas
-              ref={canvasRef}
-              className="h-full w-full touch-none"
-              aria-label="八千代 Live2D 形象"
-              onPointerMove={onPointerMove}
-              onPointerLeave={() => {
-                live2dRef.current?.focus(0, 0);
-              }}
-            />
+            <div className="relative h-[clamp(180px,32dvh,230px)] shrink-0 overflow-hidden bg-[radial-gradient(circle_at_50%_18%,rgba(158,204,218,0.35),transparent_55%),linear-gradient(180deg,#f4fafb_0%,#f7f2e9_100%)] sm:h-[270px]">
+              <canvas
+                ref={canvasRef}
+                className="h-full w-full touch-none"
+                aria-label="八千代 Live2D 形象"
+                onPointerMove={onPointerMove}
+                onPointerLeave={() => {
+                  live2dRef.current?.focus(0, 0);
+                }}
+              />
             {modelState !== "ready" && (
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-3 bg-paper-50/55">
                 {modelState === "error" ? (
@@ -605,7 +630,7 @@ export function AiAssistant() {
 
           <div
             ref={listRef}
-            className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4"
+            className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-3.5 py-3.5 sm:px-4"
             aria-live="polite"
           >
             {messages.map((message) => (
@@ -614,10 +639,10 @@ export function AiAssistant() {
                 className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  className={`max-w-[85%] whitespace-pre-wrap break-words rounded-xl px-3.5 py-2.5 text-[12px] leading-6 ${
+                  className={`max-w-[88%] whitespace-pre-wrap break-words rounded-xl px-3.5 py-2.5 text-[13px] leading-6 sm:text-[12px] ${
                     message.role === "user"
                       ? "rounded-br-sm bg-ink-900 text-paper-50"
-                      : "rounded-bl-sm border border-ink-900/8 bg-white/70 text-ink-800"
+                      : "rounded-bl-sm border border-ink-900/10 bg-white/80 text-ink-800 shadow-sm"
                   }`}
                 >
                   {message.role === "assistant"
@@ -626,6 +651,20 @@ export function AiAssistant() {
                 </div>
               </div>
             ))}
+            {messages.length <= 1 && !loading && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {QUICK_PROMPTS.map((prompt) => (
+                  <button
+                    key={prompt}
+                    type="button"
+                    onClick={() => void send(prompt)}
+                    className="rounded-full border border-ink-900/10 bg-white/70 px-3 py-1.5 text-[11px] text-ink-700/70 transition hover:border-crimson-600/25 hover:text-crimson-700"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+            )}
             {loading && (
               <div className="flex justify-start">
                 <div className="rounded-xl rounded-bl-sm border border-ink-900/8 bg-white/70 px-4 py-3 text-[12px] text-ink-700/55">
@@ -644,7 +683,7 @@ export function AiAssistant() {
             )}
           </div>
 
-          <div className="border-t border-ink-900/8 bg-paper-50 px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3">
+          <div className="border-t border-ink-900/10 bg-paper-50 px-3 pb-3 pt-3">
             <form
               onSubmit={(event) => {
                 event.preventDefault();
@@ -658,26 +697,27 @@ export function AiAssistant() {
                 onChange={(event) => setInput(event.target.value)}
                 maxLength={1000}
                 placeholder="和八千代说点什么…"
-                className="min-w-0 flex-1 rounded-full border border-ink-900/10 bg-white/75 px-4 py-2.5 text-[12px] text-ink-900 outline-none transition placeholder:text-ink-700/35 focus:border-crimson-600/35"
+                className="min-w-0 flex-1 rounded-full border border-ink-900/15 bg-white px-4 py-3 text-[13px] text-ink-900 outline-none transition placeholder:text-ink-700/35 focus:border-crimson-600/40 sm:py-2.5 sm:text-[12px]"
                 aria-label="输入消息"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-crimson-600 text-sm text-paper-50 transition hover:bg-crimson-700 disabled:cursor-not-allowed disabled:opacity-40"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-crimson-600 text-base text-paper-50 shadow-sm transition hover:bg-crimson-700 disabled:cursor-not-allowed disabled:opacity-40"
                 aria-label="发送"
               >
                 ↑
               </button>
             </form>
-            <div className="mt-2 flex items-center justify-between px-1 text-[9px] text-ink-700/40">
-              <span>对话仅保存在本机浏览器</span>
-              <button type="button" onClick={clearHistory} className="hover:text-crimson-700">
+            <div className="mt-2 flex items-center justify-between px-1 text-[9px] text-ink-700/45">
+              <span>仅保存在本机 · AI 生成内容仅供参考</span>
+              <button type="button" onClick={clearHistory} className="shrink-0 hover:text-crimson-700">
                 清空对话
               </button>
             </div>
           </div>
         </section>
+        </>
       )}
     </>
   );
