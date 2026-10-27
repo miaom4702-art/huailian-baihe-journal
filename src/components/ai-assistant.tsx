@@ -305,6 +305,8 @@ export function AiAssistant() {
   const [modelState, setModelState] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [voiceOn, setVoiceOn] = useState(false);
   const [mood, setMood] = useState<AssistantMood>("neutral");
+  const [speakingId, setSpeakingId] = useState<string | null>(null);
+  const [ttsLoadingId, setTtsLoadingId] = useState<string | null>(null);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
@@ -315,6 +317,11 @@ export function AiAssistant() {
   const loadingRef = useRef(false);
   const voiceOnRef = useRef(false);
   const moodRef = useRef<AssistantMood>("neutral");
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioIdRef = useRef<string | null>(null);
+  const audioCacheRef = useRef<Map<string, string>>(new Map());
+  const audioAbortRef = useRef<AbortController | null>(null);
+  const audioRequestRef = useRef(0);
 
   useEffect(() => {
     if (new URLSearchParams(window.location.search).get("assistant") === "1") {
@@ -355,20 +362,36 @@ export function AiAssistant() {
     }
   }, [messages]);
 
+  const stopAudio = useCallback(() => {
+    audioRequestRef.current += 1;
+    audioAbortRef.current?.abort();
+    audioAbortRef.current = null;
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    const audio = audioRef.current;
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    audioRef.current = null;
+    audioIdRef.current = null;
+    setSpeakingId(null);
+    setTtsLoadingId(null);
+    live2dRef.current?.setSpeaking(false);
+  }, []);
+
   useEffect(() => {
     voiceOnRef.current = voiceOn;
     moodRef.current = mood;
-    if (!voiceOn && typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      live2dRef.current?.setSpeaking(false);
+    if (!voiceOn) {
+      stopAudio();
     }
-  }, [voiceOn, mood]);
+  }, [voiceOn, mood, stopAudio]);
 
   useEffect(() => {
     if (!open) {
-      if (typeof window !== "undefined" && "speechSynthesis" in window) {
-        window.speechSynthesis.cancel();
-      }
+      stopAudio();
       return;
     }
 
@@ -381,7 +404,7 @@ export function AiAssistant() {
       window.clearTimeout(timer);
       window.removeEventListener("keydown", onKeyDown);
     };
-  }, [open]);
+  }, [open, stopAudio]);
 
   useEffect(() => {
     if (!open) return;
@@ -433,9 +456,107 @@ export function AiAssistant() {
     live2dRef.current?.setMood(nextMood);
   }, []);
 
-  const handleSpeaking = useCallback((speaking: boolean) => {
-    live2dRef.current?.setSpeaking(speaking);
-  }, []);
+  const playMessage = useCallback(
+    async (message: ChatMessage, auto = false) => {
+      if (audioIdRef.current === message.id) {
+        stopAudio();
+        return;
+      }
+
+      stopAudio();
+      setError(null);
+
+      let objectUrl = audioCacheRef.current.get(message.id);
+      if (!objectUrl) {
+        const requestId = audioRequestRef.current;
+        const controller = new AbortController();
+        audioAbortRef.current = controller;
+        setTtsLoadingId(message.id);
+        try {
+          const response = await fetch("/api/assistant/tts", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text: message.content }),
+            signal: controller.signal,
+          });
+
+          if (audioRequestRef.current !== requestId) return;
+          if (!response.ok) {
+            const result = (await response.json().catch(() => ({}))) as { error?: string };
+            throw new Error(result.error ?? "??????");
+          }
+
+          const blob = await response.blob();
+          if (audioRequestRef.current !== requestId) return;
+          if (!blob.size) throw new Error("??????");
+          objectUrl = URL.createObjectURL(blob);
+          audioCacheRef.current.set(message.id, objectUrl);
+        } catch (ttsError) {
+          if (audioRequestRef.current !== requestId) return;
+          setTtsLoadingId(null);
+          if (typeof window !== "undefined" && "speechSynthesis" in window) {
+            const fallbackId = message.id;
+            setError("??????????????????");
+            speakText(message.content, (speaking) => {
+              if (audioIdRef.current && audioIdRef.current !== fallbackId) return;
+              if (speaking) {
+                audioIdRef.current = fallbackId;
+                setSpeakingId(fallbackId);
+              } else {
+                audioIdRef.current = null;
+                setSpeakingId(null);
+              }
+              live2dRef.current?.setSpeaking(speaking);
+            });
+          } else {
+            setError(ttsError instanceof Error ? ttsError.message : "??????????");
+          }
+          return;
+        } finally {
+          setTtsLoadingId(null);
+        }
+      }
+
+      const audio = new Audio(objectUrl);
+      audioRef.current = audio;
+      audioIdRef.current = message.id;
+      audio.onplay = () => {
+        if (audioIdRef.current !== message.id) return;
+        setSpeakingId(message.id);
+        live2dRef.current?.setSpeaking(true);
+      };
+      audio.onended = () => {
+        if (audioIdRef.current !== message.id) return;
+        audioIdRef.current = null;
+        audioRef.current = null;
+        setSpeakingId(null);
+        live2dRef.current?.setSpeaking(false);
+      };
+      audio.onpause = () => {
+        if (audioIdRef.current !== message.id) return;
+        live2dRef.current?.setSpeaking(false);
+      };
+      audio.onerror = () => {
+        if (audioIdRef.current !== message.id) return;
+        audioIdRef.current = null;
+        audioRef.current = null;
+        setSpeakingId(null);
+        live2dRef.current?.setSpeaking(false);
+        if (!auto) setError("??????????????");
+      };
+
+      try {
+        await audio.play();
+      } catch {
+        audioIdRef.current = null;
+        audioRef.current = null;
+        setSpeakingId(null);
+        live2dRef.current?.setSpeaking(false);
+        if (!auto) setError("???????????");
+      }
+    },
+    [stopAudio],
+  );
 
   const send = useCallback(async (textOverride?: string) => {
     const text = (textOverride ?? input).trim();
@@ -484,7 +605,7 @@ export function AiAssistant() {
       setMessages((current) => [...current, assistantMessage].slice(-20));
       setMoodAndLive2D(result.mood ?? "neutral");
       if (voiceOnRef.current) {
-        speakText(result.reply, handleSpeaking);
+        void playMessage(assistantMessage, true);
       }
     } catch {
       setError("网络连接不太稳定，稍后再和八千代说话吧");
@@ -492,13 +613,14 @@ export function AiAssistant() {
       loadingRef.current = false;
       setLoading(false);
     }
-  }, [handleSpeaking, input, setMoodAndLive2D]);
+  }, [input, playMessage, setMoodAndLive2D]);
 
   const clearHistory = () => {
-    if (typeof window !== "undefined" && "speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
+    stopAudio();
+    for (const url of audioCacheRef.current.values()) {
+      URL.revokeObjectURL(url);
     }
-    live2dRef.current?.setSpeaking(false);
+    audioCacheRef.current.clear();
     const greeting: ChatMessage = {
       id: `greeting-${Date.now()}`,
       role: "assistant",
@@ -515,6 +637,17 @@ export function AiAssistant() {
     }
   };
 
+  useEffect(() => {
+    const cache = audioCacheRef.current;
+    return () => {
+      stopAudio();
+      for (const url of cache.values()) {
+        URL.revokeObjectURL(url);
+      }
+      cache.clear();
+    };
+  }, [stopAudio]);
+
   const onPointerMove = (event: React.PointerEvent<HTMLCanvasElement>) => {
     const rect = event.currentTarget.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
@@ -528,8 +661,27 @@ export function AiAssistant() {
     <>
       <button
         type="button"
+        onClick={() => setOpen(true)}
+        className="fixed bottom-[calc(74px+env(safe-area-inset-bottom))] left-3 z-40 flex h-12 items-center gap-2 rounded-full border border-ink-900/10 bg-paper-50/95 py-1 pl-1 pr-3 text-left shadow-[0_10px_30px_rgba(14,42,56,0.18)] backdrop-blur sm:hidden"
+        aria-label="和八千代聊聊"
+        aria-expanded={open}
+      >
+        <Image
+          src="/live2d/yachiyo/avatar.png"
+          alt=""
+          width={40}
+          height={40}
+          className="h-10 w-10 rounded-full object-cover"
+          priority={false}
+        />
+        <span className="text-[11px] font-medium text-ink-900">找八千代</span>
+        <span className="ml-0.5 h-1.5 w-1.5 rounded-full bg-crimson-600" aria-hidden="true" />
+      </button>
+
+      <button
+        type="button"
         onClick={() => setOpen((value) => !value)}
-        className="fixed bottom-[86px] right-4 z-[60] flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-white/70 bg-paper-50 shadow-[0_12px_40px_rgba(14,42,56,0.22)] transition hover:scale-105 sm:bottom-6 sm:right-6"
+        className="fixed bottom-6 right-6 z-[60] hidden h-14 w-14 items-center justify-center overflow-hidden rounded-full border border-white/70 bg-paper-50 shadow-[0_12px_40px_rgba(14,42,56,0.22)] transition hover:scale-105 sm:flex"
         aria-label={open ? "关闭八千代助手" : "和八千代聊聊"}
         aria-expanded={open}
       >
@@ -645,9 +797,27 @@ export function AiAssistant() {
                       : "rounded-bl-sm border border-ink-900/10 bg-white/80 text-ink-800 shadow-sm"
                   }`}
                 >
-                  {message.role === "assistant"
-                    ? message.content.replace(/\*\*/g, "")
-                    : message.content}
+                  {message.role === "assistant" ? (
+                    <>
+                      <div>{message.content.replace(/\*\*/g, "")}</div>
+                      <div className="mt-2 flex justify-end">
+                        <button
+                          type="button"
+                          onClick={() => void playMessage(message)}
+                          disabled={ttsLoadingId !== null}
+                          className="inline-flex items-center gap-1 rounded-full border border-ink-900/10 bg-paper-50/70 px-2 py-1 text-[10px] text-ink-700/60 transition hover:border-crimson-600/25 hover:text-crimson-700 disabled:opacity-40"
+                        >
+                          {ttsLoadingId === message.id
+                            ? "准备语音…"
+                            : speakingId === message.id
+                              ? "停止"
+                              : "朗读"}
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    message.content
+                  )}
                 </div>
               </div>
             ))}
