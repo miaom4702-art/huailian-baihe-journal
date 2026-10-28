@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
+import { ArticleFileImport } from "@/components/article-file-import";
 import { CATEGORIES, CATEGORY_LABELS } from "@/lib/constants";
 
 type SerialOption = {
@@ -31,9 +32,11 @@ async function uploadImage(file: File) {
 export function SubmissionForm({ serials }: { serials: SerialOption[] }) {
   const router = useRouter();
   const submittingRef = useRef(false);
+  const contentRef = useRef<HTMLTextAreaElement | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [contentLength, setContentLength] = useState(0);
   const [done, setDone] = useState(false);
 
   const [serialChoice, setSerialChoice] = useState("");
@@ -166,6 +169,7 @@ export function SubmissionForm({ serials }: { serials: SerialOption[] }) {
       }
 
       form.reset();
+      setContentLength(0);
       resetExtras();
       setDone(true);
       router.refresh();
@@ -361,14 +365,26 @@ export function SubmissionForm({ serials }: { serials: SerialOption[] }) {
         <label className="label" htmlFor="content">
           正文
         </label>
+        <div className="mb-3">
+          <ArticleFileImport
+            hasContent={contentLength > 0}
+            disabled={loading || uploading}
+            onText={(text) => {
+              if (contentRef.current) contentRef.current.value = text;
+              setContentLength(text.length);
+            }}
+          />
+        </div>
         <textarea
+          ref={contentRef}
           id="content"
           name="content"
           className="input min-h-80 resize-y font-serif leading-7"
           required
           minLength={200}
           maxLength={30000}
-          placeholder="请粘贴正文。段落之间空一行。插图请使用下方单独的上传窗口。"
+          onChange={(event) => setContentLength(event.target.value.length)}
+          placeholder="请粘贴正文，或从上方导入 TXT / PDF。段落之间空一行。插图请使用下方单独的上传窗口。"
         />
       </div>
 

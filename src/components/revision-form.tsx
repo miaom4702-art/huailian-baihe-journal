@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+import { ArticleFileImport } from "@/components/article-file-import";
 import { CATEGORIES, CATEGORY_LABELS } from "@/lib/constants";
 
 type Props = {
@@ -159,6 +160,15 @@ export function RevisionForm({ article }: Props) {
         <label className="label" htmlFor="revision-content">
           正文
         </label>
+        <div className="mb-3">
+          <ArticleFileImport
+            hasContent={form.content.trim().length > 0}
+            disabled={loading}
+            onText={(text) =>
+              setForm((current) => ({ ...current, content: text }))
+            }
+          />
+        </div>
         <textarea
           id="revision-content"
           className="input min-h-80 resize-y font-serif leading-7"

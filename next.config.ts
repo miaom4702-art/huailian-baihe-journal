@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  serverExternalPackages: ["msedge-tts", "ws"],
+  serverExternalPackages: ["msedge-tts", "ws", "unpdf"],
   poweredByHeader: false,
   eslint: {
     ignoreDuringBuilds: false,
