@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from "next";
+import { headers } from "next/headers";
 
 import { AiAssistant } from "@/components/ai-assistant";
+import { AppearanceProvider } from "@/components/appearance-provider";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -37,18 +39,23 @@ export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const user = await getCurrentUser();
+  const nonce = (await headers()).get("x-nonce") ?? undefined;
+  const themeBootstrap = `(function(){try{var m=localStorage.getItem("hlbh-theme")||"light";var d=m==="dark"||(m==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);document.documentElement.dataset.theme=d?"dark":"light";}catch(e){}})();`;
 
   return (
-    <html lang="zh-CN">
+    <html lang="zh-CN" suppressHydrationWarning>
       <body className="flex min-h-screen flex-col">
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-        <MobileTabBar
-          isLoggedIn={Boolean(user)}
-          avatarImage={user?.avatarImage ?? null}
-        />
-        <AiAssistant />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
+        <AppearanceProvider>
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+          <MobileTabBar
+            isLoggedIn={Boolean(user)}
+            avatarImage={user?.avatarImage ?? null}
+          />
+          <AiAssistant />
+        </AppearanceProvider>
       </body>
     </html>
   );

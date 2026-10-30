@@ -199,3 +199,212 @@
     display: none !important;
   }
 }
+
+
+/* ?? Appearance: night mode + optional custom scenery ????????????????????? */
+.site-background {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: var(--site-background);
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed;
+  pointer-events: none;
+}
+
+.site-background::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(247, 251, 253, 0.48);
+}
+
+html.has-custom-bg body {
+  background: transparent !important;
+}
+
+html.has-custom-bg .site-background {
+  display: block;
+}
+
+html.has-custom-bg .site-header,
+html.has-custom-bg nav[aria-label="应用导航"] {
+  background-color: rgba(247, 251, 253, 0.84) !important;
+  backdrop-filter: blur(16px);
+}
+
+html.has-custom-bg .mobile-menu-panel {
+  background-color: rgba(247, 251, 253, 0.96) !important;
+}
+
+html.has-custom-bg .card,
+html.has-custom-bg [class*="bg-white"] {
+  background-color: rgba(255, 255, 255, 0.74) !important;
+  backdrop-filter: blur(10px);
+}
+
+html.has-custom-bg [class*="bg-paper-50"],
+html.has-custom-bg [class*="bg-paper-100"] {
+  background-color: rgba(247, 251, 253, 0.66) !important;
+}
+
+html.dark {
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #0d161a;
+  background-image:
+    radial-gradient(circle at 12% 0%, rgba(223, 160, 106, 0.08), transparent 30rem),
+    radial-gradient(circle at 84% 8%, rgba(95, 166, 193, 0.1), transparent 30rem),
+    radial-gradient(circle at 60% 42%, rgba(142, 200, 221, 0.06), transparent 28rem);
+  color: #e9e3d8;
+}
+
+html.dark [class*="text-ink-900"] {
+  color: #ece6db !important;
+}
+
+html.dark [class*="text-ink-800"] {
+  color: #d7e0e2 !important;
+}
+
+html.dark [class*="text-ink-700"] {
+  color: #aebbc0 !important;
+}
+
+html.dark [class*="text-ink-600"] {
+  color: #8ec8dd !important;
+}
+
+html.dark [class*="text-crimson-6"],
+html.dark [class*="text-crimson-7"] {
+  color: #8ec8dd !important;
+}
+
+html.dark [class*="border-ink-900"] {
+  border-color: rgba(233, 227, 216, 0.13) !important;
+}
+
+html.dark [class*="bg-paper-50"],
+html.dark [class*="bg-paper-100"],
+html.dark [class*="bg-paper-200"] {
+  background-color: #111c21 !important;
+}
+
+html.dark [class*="bg-white"] {
+  background-color: #152227 !important;
+}
+
+html.dark .site-header {
+  background-color: rgba(13, 22, 26, 0.86) !important;
+  border-color: rgba(233, 227, 216, 0.12) !important;
+}
+
+html.dark nav[aria-label="应用导航"] {
+  background-color: rgba(13, 22, 26, 0.94) !important;
+  border-color: rgba(233, 227, 216, 0.12) !important;
+}
+
+html.dark .mobile-menu-panel {
+  background-color: #0f1a1f !important;
+}
+
+html.dark .card {
+  background-color: rgba(21, 34, 39, 0.86) !important;
+  border-color: rgba(233, 227, 216, 0.12) !important;
+  color: #e9e3d8;
+}
+
+html.dark .input {
+  background-color: #0f1a1f !important;
+  border-color: rgba(233, 227, 216, 0.2) !important;
+  color: #e9e3d8 !important;
+}
+
+html.dark .input::placeholder {
+  color: rgba(233, 227, 216, 0.36) !important;
+}
+
+html.dark .btn-primary {
+  background-color: #8ec8dd !important;
+  color: #0d161a !important;
+}
+
+html.dark .btn-primary:hover {
+  background-color: #b1dbe8 !important;
+}
+
+html.dark .btn-crimson {
+  background-color: #2f7a99 !important;
+  color: #f7fbfd !important;
+}
+
+html.dark .btn-outline {
+  border-color: rgba(233, 227, 216, 0.28) !important;
+  color: #e9e3d8 !important;
+}
+
+html.dark .btn-outline:hover {
+  background-color: rgba(233, 227, 216, 0.08) !important;
+  border-color: rgba(233, 227, 216, 0.55) !important;
+}
+
+html.dark .btn-ghost {
+  color: #aebbc0 !important;
+}
+
+html.dark .article-body p {
+  color: rgba(233, 227, 216, 0.9) !important;
+}
+
+html.dark ::selection {
+  background: #8ec8dd;
+  color: #0d161a;
+}
+
+html.dark :focus-visible {
+  --tw-ring-offset-color: #0d161a;
+}
+
+html.dark .site-background::after {
+  background: rgba(5, 12, 15, 0.62);
+}
+
+html.dark.has-custom-bg .site-header,
+html.dark.has-custom-bg nav[aria-label="应用导航"] {
+  background-color: rgba(13, 22, 26, 0.86) !important;
+}
+
+html.dark.has-custom-bg .card,
+html.dark.has-custom-bg [class*="bg-white"] {
+  background-color: rgba(21, 34, 39, 0.78) !important;
+}
+
+html.dark.has-custom-bg [class*="bg-paper-50"],
+html.dark.has-custom-bg [class*="bg-paper-100"] {
+  background-color: rgba(17, 28, 33, 0.72) !important;
+}
+
+html.dark .ai-assistant-panel {
+  background-color: #101b20 !important;
+  border-color: rgba(233, 227, 216, 0.14) !important;
+}
+
+html.dark .ai-assistant-header {
+  background-image: linear-gradient(90deg, #14242a, #101b20 55%, #1b211f) !important;
+  border-color: rgba(233, 227, 216, 0.12) !important;
+}
+
+html.dark .ai-assistant-stage {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(95, 166, 193, 0.16), transparent 55%),
+    linear-gradient(180deg, #0c171c 0%, #101b20 100%) !important;
+}
+
+html.dark .ai-assistant-panel [class*="bg-paper-50"],
+html.dark .ai-assistant-panel [class*="bg-white"] {
+  background-color: rgba(21, 34, 39, 0.92) !important;
+}

@@ -711,12 +711,12 @@ export function AiAssistant() {
             role="dialog"
             aria-modal="true"
             aria-label="月见八千代 AI 助手"
-            className="fixed bottom-[calc(74px+env(safe-area-inset-bottom))] left-2 right-2 z-[70] flex h-[min(80dvh,700px)] flex-col overflow-hidden rounded-2xl border border-ink-900/10 bg-paper-50 shadow-[0_24px_80px_rgba(14,42,56,0.3)] sm:bottom-24 sm:left-auto sm:right-6 sm:h-auto sm:max-h-[calc(100dvh-120px)] sm:w-[390px] sm:rounded-xl"
+            className="ai-assistant-panel fixed bottom-[calc(74px+env(safe-area-inset-bottom))] left-2 right-2 z-[70] flex h-[min(86dvh,760px)] flex-col overflow-hidden rounded-2xl border border-ink-900/10 bg-paper-50 shadow-[0_24px_80px_rgba(14,42,56,0.3)] sm:bottom-24 sm:left-auto sm:right-6 sm:h-[min(700px,calc(100dvh-128px))] sm:w-[420px] sm:rounded-xl"
           >
             <div className="flex justify-center pt-2 sm:hidden">
               <span className="h-1 w-10 rounded-full bg-ink-900/15" />
             </div>
-            <div className="flex items-center justify-between gap-3 border-b border-ink-900/10 bg-gradient-to-r from-[#eef6f8] via-paper-50 to-[#f7f0e8] px-4 py-3">
+            <div className="ai-assistant-header flex items-center justify-between gap-3 border-b border-ink-900/10 bg-gradient-to-r from-[#eef6f8] via-paper-50 to-[#f7f0e8] px-4 py-3">
               <div className="min-w-0">
                 <p className="truncate font-serif text-base font-semibold text-ink-900">月见八千代</p>
                 <p className="mt-0.5 truncate text-[10px] tracking-wide text-ink-700/60">
@@ -747,7 +747,7 @@ export function AiAssistant() {
               </div>
             </div>
 
-            <div className="relative h-[clamp(180px,32dvh,230px)] shrink-0 overflow-hidden bg-[radial-gradient(circle_at_50%_18%,rgba(158,204,218,0.35),transparent_55%),linear-gradient(180deg,#f4fafb_0%,#f7f2e9_100%)] sm:h-[270px]">
+            <div className="ai-assistant-stage relative h-[clamp(180px,32dvh,230px)] shrink-0 overflow-hidden bg-[radial-gradient(circle_at_50%_18%,rgba(158,204,218,0.35),transparent_55%),linear-gradient(180deg,#f4fafb_0%,#f7f2e9_100%)] sm:h-[280px]">
               <canvas
                 ref={canvasRef}
                 className="h-full w-full touch-none"
@@ -782,7 +782,7 @@ export function AiAssistant() {
 
           <div
             ref={listRef}
-            className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-3.5 py-3.5 sm:px-4"
+            className="min-h-0 flex-1 space-y-3.5 overflow-y-auto overscroll-contain px-3.5 py-4 sm:px-4"
             aria-live="polite"
           >
             {messages.map((message) => (

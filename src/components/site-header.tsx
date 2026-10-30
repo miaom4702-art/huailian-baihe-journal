@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getCurrentUser, hasRole } from "@/lib/auth";
 import { ROLE_LABELS } from "@/lib/constants";
 
+import { AppearanceMenu } from "./appearance-provider";
 import { LogoutButton } from "./logout-button";
 import { MobileNav } from "./mobile-nav";
 
@@ -55,7 +56,8 @@ export async function SiteHeader() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <AppearanceMenu />
           {user ? (
         <div className="flex shrink-0 items-center gap-2 sm:gap-3">
               <div className="hidden text-right sm:block">
