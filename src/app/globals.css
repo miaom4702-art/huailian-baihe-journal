@@ -408,3 +408,104 @@ html.dark .ai-assistant-panel [class*="bg-paper-50"],
 html.dark .ai-assistant-panel [class*="bg-white"] {
   background-color: rgba(21, 34, 39, 0.92) !important;
 }
+
+/* ?? Halloween seasonal skin ??????????????????????????????????????????????? */
+.halloween-decor {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+html.halloween .halloween-decor {
+  display: block;
+}
+
+.halloween-bat {
+  position: absolute;
+  fill: #f0a25b;
+  opacity: 0.3;
+  filter: drop-shadow(0 0 8px rgba(240, 162, 91, 0.25));
+  animation: bat-drift 14s ease-in-out infinite;
+}
+
+@keyframes bat-drift {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(-8deg); }
+  50% { transform: translate3d(16px, -12px, 0) rotate(8deg); }
+}
+
+html.halloween body {
+  background-color: #120c18;
+  background-image:
+    radial-gradient(circle at 12% 0%, rgba(240, 162, 91, 0.12), transparent 28rem),
+    radial-gradient(circle at 82% 14%, rgba(141, 75, 155, 0.2), transparent 30rem),
+    radial-gradient(circle at 55% 70%, rgba(240, 162, 91, 0.06), transparent 26rem);
+}
+
+html.halloween .site-header,
+html.halloween nav[aria-label="????"] {
+  background-color: rgba(18, 12, 24, 0.9) !important;
+  border-color: rgba(240, 162, 91, 0.18) !important;
+}
+
+html.halloween .mobile-menu-panel {
+  background-color: #160f1c !important;
+}
+
+html.halloween [class*="text-crimson-6"],
+html.halloween [class*="text-crimson-7"],
+html.halloween .eyebrow {
+  color: #f0a25b !important;
+}
+
+html.halloween .btn-primary {
+  background-color: #f0a25b !important;
+  color: #1a0f1f !important;
+}
+
+html.halloween .btn-primary:hover {
+  background-color: #ffc078 !important;
+}
+
+html.halloween .btn-crimson {
+  background-color: #8d4b9b !important;
+  color: #fff7eb !important;
+}
+
+html.halloween .card,
+html.halloween [class*="bg-white"] {
+  background-color: rgba(27, 18, 31, 0.88) !important;
+  border-color: rgba(240, 162, 91, 0.18) !important;
+}
+
+html.halloween [class*="bg-paper-50"],
+html.halloween [class*="bg-paper-100"] {
+  background-color: #1a111f !important;
+}
+
+html.halloween .site-background::after {
+  background: rgba(10, 5, 14, 0.58);
+}
+
+html.halloween .ai-assistant-panel {
+  background-color: #160f1c !important;
+  border-color: rgba(240, 162, 91, 0.22) !important;
+}
+
+html.halloween .ai-assistant-header {
+  background-image: linear-gradient(90deg, #24142d, #160f1c 55%, #2a1819) !important;
+  border-color: rgba(240, 162, 91, 0.18) !important;
+}
+
+html.halloween .ai-assistant-stage {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(141, 75, 155, 0.28), transparent 55%),
+    linear-gradient(180deg, #120c18 0%, #1a111f 100%) !important;
+}
+
+html.halloween .ai-assistant-panel [class*="bg-paper-50"],
+html.halloween .ai-assistant-panel [class*="bg-white"] {
+  background-color: rgba(27, 18, 31, 0.94) !important;
+}

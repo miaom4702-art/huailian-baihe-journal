@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 
-type ThemeMode = "light" | "dark" | "system";
+type ThemeMode = "light" | "dark" | "system" | "halloween";
 
 type AppearanceContextValue = {
   mode: ThemeMode;
@@ -106,8 +106,16 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
   useEffect(() => {
     try {
       const storedTheme = localStorage.getItem(THEME_KEY);
-      if (storedTheme === "dark" || storedTheme === "system" || storedTheme === "light") {
+      if (
+        storedTheme === "dark" ||
+        storedTheme === "system" ||
+        storedTheme === "light" ||
+        storedTheme === "halloween"
+      ) {
         setModeState(storedTheme);
+      } else {
+        const now = new Date();
+        setModeState(now.getMonth() === 9 && now.getDate() === 31 ? "halloween" : "light");
       }
       setBackgroundState(getStoredBackground());
     } catch {
@@ -122,12 +130,20 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
     const root = document.documentElement;
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const apply = () => {
-      const dark = mode === "dark" || (mode === "system" && media.matches);
+      const halloween = mode === "halloween";
+      const dark = halloween || mode === "dark" || (mode === "system" && media.matches);
       root.classList.toggle("dark", dark);
-      root.dataset.theme = dark ? "dark" : "light";
+      root.classList.toggle("halloween", halloween);
+      root.dataset.theme = halloween ? "halloween" : dark ? "dark" : "light";
       root.style.colorScheme = dark ? "dark" : "light";
       const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
-      if (meta) meta.content = dark ? "#0d161a" : "#f7fbfd";
+      if (meta) meta.content = halloween ? "#160f1c" : dark ? "#0d161a" : "#f7fbfd";
+      const nativeBridge = (
+        window as unknown as {
+          HLBHTheme?: { setTheme?: (value: string) => void };
+        }
+      ).HLBHTheme;
+      nativeBridge?.setTheme?.(halloween ? "halloween" : dark ? "dark" : "light");
     };
 
     apply();
@@ -203,6 +219,32 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
     >
       {children}
       <div className="site-background" aria-hidden="true" />
+      {mode === "halloween" && (
+        <div className="halloween-decor" aria-hidden="true">
+          {[
+            { left: "8%", top: "22%", size: 22, delay: "0s", duration: "11s" },
+            { left: "78%", top: "30%", size: 16, delay: "-3s", duration: "14s" },
+            { left: "18%", top: "68%", size: 13, delay: "-6s", duration: "12s" },
+            { left: "68%", top: "78%", size: 18, delay: "-2s", duration: "16s" },
+          ].map((bat, index) => (
+            <svg
+              key={index}
+              viewBox="0 0 24 24"
+              className="halloween-bat"
+              style={{
+                left: bat.left,
+                top: bat.top,
+                width: bat.size,
+                height: bat.size,
+                animationDelay: bat.delay,
+                animationDuration: bat.duration,
+              }}
+            >
+              <path d="M12 5.2c-1.6 0-2.7 1-3.4 2.2C6.9 5.9 4.7 5.3 2 5.9c1.6 1.8 2.5 4.2 2.3 6.8 2.1-.9 4-.7 5.6.7.7.6 1.3 1.4 2.1 2.4.8-1 1.4-1.8 2.1-2.4 1.6-1.4 3.5-1.6 5.6-.7-.2-2.6.7-5 2.3-6.8-2.7-.6-4.9 0-6.6 1.5C15.2 6.2 14.1 5.2 12 5.2Z" />
+            </svg>
+          ))}
+        </div>
+      )}
 
       {open && (
         <div
@@ -235,11 +277,12 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
             </div>
 
             <section className="mt-5">
-              <p className="text-[11px] font-semibold tracking-wide text-ink-900">夜间模式</p>
-              <div className="mt-2 grid grid-cols-3 gap-2">
+              <p className="text-[11px] font-semibold tracking-wide text-ink-900">主题</p>
+              <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
                 {[
                   { value: "light" as const, label: "浅色" },
                   { value: "dark" as const, label: "深色" },
+                  { value: "halloween" as const, label: "万圣节" },
                   { value: "system" as const, label: "跟随系统" },
                 ].map((option) => (
                   <button
@@ -248,7 +291,9 @@ export function AppearanceProvider({ children }: { children: React.ReactNode }) 
                     onClick={() => setMode(option.value)}
                     className={`rounded-sm border px-2 py-2 text-xs transition ${
                       mode === option.value
-                        ? "border-crimson-600 bg-crimson-600 text-white"
+                        ? option.value === "halloween"
+                          ? "border-[#f0a25b] bg-[#f0a25b] text-[#1a0f1f]"
+                          : "border-crimson-600 bg-crimson-600 text-white"
                         : "border-ink-900/15 text-ink-700 hover:border-crimson-600/35"
                     }`}
                   >

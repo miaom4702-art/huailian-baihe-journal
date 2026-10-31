@@ -40,7 +40,7 @@ export default async function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   const user = await getCurrentUser();
   const nonce = (await headers()).get("x-nonce") ?? undefined;
-  const themeBootstrap = `(function(){try{var m=localStorage.getItem("hlbh-theme")||"light";var d=m==="dark"||(m==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);document.documentElement.dataset.theme=d?"dark":"light";}catch(e){}})();`;
+  const themeBootstrap = `(function(){try{var m=localStorage.getItem("hlbh-theme");if(!m){var n=new Date();m=n.getMonth()===9&&n.getDate()===31?"halloween":"light";}var h=m==="halloween";var d=h||m==="dark"||(m==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);document.documentElement.classList.toggle("dark",d);document.documentElement.classList.toggle("halloween",h);document.documentElement.dataset.theme=h?"halloween":d?"dark":"light";if(window.HLBHTheme&&window.HLBHTheme.setTheme){window.HLBHTheme.setTheme(h?"halloween":d?"dark":"light");}}catch(e){}})();`;
 
   return (
     <html lang="zh-CN" suppressHydrationWarning>
